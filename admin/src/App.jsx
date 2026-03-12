@@ -76,7 +76,7 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home/> } />
+        <Route path="/" element={<ProtectPage><Home/></ProtectPage> } />
         <Route path="/authconfirm" element={<AuthConfirm/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/halflogin" element={<HalfLogin/>} />
