@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Logout from "../../../Travel/src/utils/Logout";
 import {
   FaLandmark,
   FaMoneyBillWave,
@@ -11,6 +10,7 @@ import {
   FaCalendarAlt,
   FaEnvelope,
 } from "react-icons/fa";
+import Logout from "../utils/Logout";
 
 function Aside() {
   const handleCloseSidebar = (e) => {
