@@ -1,12 +1,13 @@
-import CheckAdminToken from "../utils/CheckToken";
+import { Navigate } from "react-router-dom";
 
+const ProtectPages = ({ children }) => {
+  const token = localStorage.getItem("token");
 
-function ProtectPage({children}){
-    if(!CheckAdminToken()){
-        alert("Kindly Login First.");
-        window.location.href = "/login";
-    }
-    return children;
-}
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
 
-export default ProtectPage;
+  return children;
+};
+
+export default ProtectPages;

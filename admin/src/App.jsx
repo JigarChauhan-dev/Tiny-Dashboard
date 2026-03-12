@@ -54,7 +54,6 @@ import Error404 from "./Pages/Error404"
 import Error500 from "./Pages/Error500"
 import PageBlank from "./Pages/PageBlank"
 import ChartApex from "./Pages/ChartApex"
-import ProtectPage from "./utils/ProtectPage"
 import AdminManageHotel from "./Pages/AdminManageHotel"
 import AdminManageUsers from "./Pages/AdminManageUsers"
 import AdminManageHeritage from "./Pages/AdminManageHeritage"
@@ -69,6 +68,7 @@ import BookingHistory from "./Pages/AdminBookingHistory"
 import AdminManageState from "./Pages/AdminManageState"
 import AdminManageInquiries from "./Pages/AdminManageInquiries"
 import AdminManageBooking from "./Pages/AdminManageBooking"
+import ProtectPages from "./utils/ProtectPage"
 
 function App() {
 
@@ -76,7 +76,7 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ProtectPage><Home/></ProtectPage> } />
+        <Route path="/" element={<ProtectPages><Home/></ProtectPages> } />
         <Route path="/authconfirm" element={<AuthConfirm/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/halflogin" element={<HalfLogin/>} />
