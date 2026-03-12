@@ -37,7 +37,7 @@ let adminbook = require("./routes/admin/book.routes");
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173","http://localhost:5174"],
+    origin: ["https://tiny-dashboard.onrender.com/"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

@@ -3,7 +3,7 @@ import CheckAdminToken from "./CheckToken";
 import { LogoutWithoutNotification } from "./Logout";
 
 const api = axios.create({
-    baseURL : "http://localhost:8000/api"
+    baseURL : "https://backend-twxo.onrender.com"
 });
 
 api.interceptors.request.use(
