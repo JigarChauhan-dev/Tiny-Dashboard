@@ -1,7 +1,8 @@
-import CheckToken from "../../../Travel/src/utils/CheckToken";
+import CheckAdminToken from "../utils/CheckToken";
+
 
 function ProtectPage({children}){
-    if(!CheckToken()){
+    if(!CheckAdminToken()){
         alert("Kindly Login First.");
         window.location.href = "/login";
     }
