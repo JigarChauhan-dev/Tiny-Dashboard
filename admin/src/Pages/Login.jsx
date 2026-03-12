@@ -24,7 +24,7 @@ function Login() {
 
     try {
       let response = await axios.post(
-        "http://localhost:8000/api/auth/login",
+        "https://tiny-dashboard.onrender.com/api/auth/login",
         user,
       );
       console.log(response.data.token);
