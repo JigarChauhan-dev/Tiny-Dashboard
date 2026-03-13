@@ -31,9 +31,10 @@ let feedbackRoutes = require("./routes/admin/feedback.routes");
 const adminUserRoutes = require("./routes/admin/users.routes");
 let admininquiries = require("./routes/admin/inquiries.routes");
 let adminbook = require("./routes/admin/book.routes");
-
+const cookieParser = require('cookie-parser')
 
 // MiddleWare
+app.use(cookieParser());
 app.use(express.json());
 app.use(
   cors({
