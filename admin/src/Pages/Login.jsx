@@ -30,7 +30,10 @@ function Login() {
       console.log(response.data.token);
 
       if (response.data.token != "") {
-        localStorage.setItem("token", response.data.token);
+        console.log(response.data);
+        let token = response.data.token;
+
+        cookie.set("token", token, { expires: 1 });
 
         setUser({
           email: "",
