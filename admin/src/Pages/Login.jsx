@@ -24,15 +24,12 @@ function Login() {
 
     try {
       let response = await axios.post(
-        "https://tiny-dashboard.onrender.com/api/auth/login",
+        "https://backend-twxo.onrender.com/api/auth/login",
         user,
       );
-      console.log(response.data.token);
-
-      if (response.data.token != "") {
-        console.log(response.data);
-        let token = response.data.token;
-
+      let token = response.data.token;
+      
+      if (token != "") {
         cookie.set("token", token, { expires: 1 });
 
         setUser({
