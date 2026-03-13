@@ -41,7 +41,7 @@ function Login() {
         });
 
         alert("Login Successful");
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     } catch (error) {
       setUser({
