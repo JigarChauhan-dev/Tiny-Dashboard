@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
+  const navigate = useNavigate();
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
     email: "",
@@ -29,7 +30,7 @@ function Login() {
       );
       let token = response.data.token;
       
-      if (token != "") {
+      if (token) {
         cookie.set("token", token, { expires: 1 });
 
         setUser({
@@ -38,7 +39,7 @@ function Login() {
         });
 
         alert("Login Successful");
-        window.location.href = "/";
+        navigate("/");
       }
     } catch (error) {
       setUser({
@@ -46,7 +47,7 @@ function Login() {
         password: "",
       });
       alert("Invalid Details");
-      window.location.href = "/login";
+      navigate("/login");
     }
   }
   console.log(user);
