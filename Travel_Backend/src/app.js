@@ -38,7 +38,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://tiny-dashboard.onrender.com"],
+    origin: ["https://tiny-dashboard.onrender.com","https://heritage-compass.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

@@ -85,7 +85,7 @@ function SignUp() {
 
     try {
       let response = await axios.post(
-        "http://localhost:8000/api/auth/signup",
+        "https://backend-twxo.onrender.com/api/auth/signup",
         user,
       );
 

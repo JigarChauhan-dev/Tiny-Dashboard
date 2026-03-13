@@ -25,7 +25,7 @@ function Login() {
 
     try {
       let response = await axios.post(
-        "http://localhost:8000/api/auth/login",
+        "https://backend-twxo.onrender.com/api/auth/login",
         user,
       );
 
