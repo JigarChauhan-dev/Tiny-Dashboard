@@ -112,18 +112,6 @@ function SignUp() {
           <div className="banner-9 sec-img">
             <div className="wrapper">
               <ul className="breadcrumbs-custom-path">
-                <li>
-                  <Link to={"/"}>
-                    Home{" "}
-                    <span className="fa fa-angle-right" aria-hidden="true" />
-                  </Link>
-                </li>
-                <li>
-                  <a href="#pages">
-                    Pages{" "}
-                    <span className="fa fa-angle-right" aria-hidden="true" />
-                  </a>
-                </li>
                 <li className="active">Signup</li>
               </ul>
             </div>

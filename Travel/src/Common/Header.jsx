@@ -14,6 +14,11 @@ function Header() {
   }, []);
   // console.log(token);
 
+  function closeMenu() {
+  const nav = document.getElementById("nav");
+  if (nav) nav.checked = false;
+}
+
   return (
     <div>
       {/* header */}
@@ -35,17 +40,17 @@ function Header() {
                 <nav>
                   <ul className="menu">
                     <li>
-                      <Link to={"/"} className="link-nav">
+                      <Link to={"/"} className="link-nav" onClick={closeMenu}>
                         Home
                       </Link>
                     </li>
                     <li>
-                      <Link to={"/about"} className="link-nav">
+                      <Link to={"/about"} className="link-nav" onClick={closeMenu}>
                         Our Legacy
                       </Link>
                     </li>
                     <li>
-                      <Link to={"/heritageplace"} className="link-nav">
+                      <Link to={"/heritageplace"} className="link-nav" onClick={closeMenu}>
                         Historical Sites
                       </Link>
                     </li>
@@ -56,10 +61,10 @@ function Header() {
                       <Link to={"/pricing"}>Visitor Guide</Link>
                     </li> */}
                     <li>
-                      <Link to={"/hotel"}>Guest stay</Link>
+                      <Link to={"/hotel"} onClick={closeMenu}>Guest stay</Link>
                     </li>
                     <li>
-                      <Link to={"/bookinghistory"}>Booking History</Link>
+                      <Link to={"/bookinghistory"} onClick={closeMenu}>Booking History</Link>
                     </li>
                     {/* <li>
                       <label htmlFor="drop-3" className="toggle toogle-2">
@@ -103,7 +108,7 @@ function Header() {
                       </ul>
                     </li> */}
                     <li>
-                      <Link to={"/contact"} className="link-nav">
+                      <Link to={"/contact" }onClick={closeMenu} className="link-nav">
                         Contact
                       </Link>
                     </li>
@@ -132,12 +137,12 @@ function Header() {
                       <>
                         {" "}
                         <li className="nav-right-sty">
-                          <Link to={"/login"} className="actionbg">
+                          <Link to={"/login"} onClick={closeMenu} className="actionbg">
                             Login
                           </Link>
                         </li>
                         <li className="nav-right-sty">
-                          <Link to={"/signup"} className="actionbg">
+                          <Link to={"/signup"} onClick={closeMenu} className="actionbg">
                             Signup
                           </Link>
                         </li>
