@@ -1,10 +1,12 @@
 import Cookie from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 function Logout(){
+    let navigate = useNavigate();
     try {
         Cookie.remove("token")
         alert("Logout Successful")
-        window.location.href = "/login"
+        navigate("/login");
     } catch (error) {
         console.log(error);
     }
@@ -13,7 +15,7 @@ function Logout(){
 function LogoutWithoutNotification() {
     try {
         Cookie.remove("token");
-        window.location.href = "/login"
+        navigate("/login");
     } catch (error) {
         console.log(error);
     }
