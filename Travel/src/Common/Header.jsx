@@ -1,13 +1,12 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import CheckToken from "../utils/CheckToken";
 import Logout from "../utils/Logout";
 
 function Header() {
   let [token, setToken] = useState("");
-  let navigate = useNavigate();
 
   useEffect(() => {
     let token = CheckToken();
@@ -16,9 +15,9 @@ function Header() {
   // console.log(token);
 
   function closeMenu() {
-  const nav = document.getElementById("nav");
-  if (nav) nav.checked = false;
-}
+    const nav = document.getElementById("nav");
+    if (nav) nav.checked = false;
+  }
 
   return (
     <div>
@@ -46,12 +45,20 @@ function Header() {
                       </Link>
                     </li>
                     <li>
-                      <Link to={"/about"} className="link-nav" onClick={closeMenu}>
+                      <Link
+                        to={"/about"}
+                        className="link-nav"
+                        onClick={closeMenu}
+                      >
                         Our Legacy
                       </Link>
                     </li>
                     <li>
-                      <Link to={"/heritageplace"} className="link-nav" onClick={closeMenu}>
+                      <Link
+                        to={"/heritageplace"}
+                        className="link-nav"
+                        onClick={closeMenu}
+                      >
                         Historical Sites
                       </Link>
                     </li>
@@ -62,10 +69,14 @@ function Header() {
                       <Link to={"/pricing"}>Visitor Guide</Link>
                     </li> */}
                     <li>
-                      <Link to={"/hotel"} onClick={closeMenu}>Guest stay</Link>
+                      <Link to={"/hotel"} onClick={closeMenu}>
+                        Guest stay
+                      </Link>
                     </li>
                     <li>
-                      <Link to={"/bookinghistory"} onClick={closeMenu}>Booking History</Link>
+                      <Link to={"/bookinghistory"} onClick={closeMenu}>
+                        Booking History
+                      </Link>
                     </li>
                     {/* <li>
                       <label htmlFor="drop-3" className="toggle toogle-2">
@@ -109,7 +120,11 @@ function Header() {
                       </ul>
                     </li> */}
                     <li>
-                      <Link to={"/contact" }onClick={closeMenu} className="link-nav">
+                      <Link
+                        to={"/contact"}
+                        onClick={closeMenu}
+                        className="link-nav"
+                      >
                         Contact
                       </Link>
                     </li>
@@ -122,7 +137,7 @@ function Header() {
                           <Link
                             className="actionbg"
                             onClick={() => {
-                              Logout(navigate);
+                              Logout();
                             }}
                           >
                             Logout
@@ -138,12 +153,20 @@ function Header() {
                       <>
                         {" "}
                         <li className="nav-right-sty">
-                          <Link to={"/login"} onClick={closeMenu} className="actionbg">
+                          <Link
+                            to={"/login"}
+                            onClick={closeMenu}
+                            className="actionbg"
+                          >
                             Login
                           </Link>
                         </li>
                         <li className="nav-right-sty">
-                          <Link to={"/signup"} onClick={closeMenu} className="actionbg">
+                          <Link
+                            to={"/signup"}
+                            onClick={closeMenu}
+                            className="actionbg"
+                          >
                             Signup
                           </Link>
                         </li>
