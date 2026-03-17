@@ -1,6 +1,6 @@
 import Cookie from "js-cookie";
 
-function Logout(){
+function Logout(navigate){
     try {
         Cookie.remove("token")
         alert("Logout Successful")
