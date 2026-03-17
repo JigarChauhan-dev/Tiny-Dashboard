@@ -30,7 +30,7 @@ function Login() {
       );
 
       if (response.data.token) {
-        Cookies.set("token", response.data.token);
+        Cookies.set("token", response.data.token, { expires: 7 });
 
         alert("Login Successful");
         window.location.href = "/";
