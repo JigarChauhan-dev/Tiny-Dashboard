@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Logout from "../utils/Logout";
 import api from "../utils/AxiosConfig";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Profile() {
   const [userProfile, setUserProfile] = useState({});
+  const navigate = useNavigate();
 
   async function FetchUserProfile() {
     try {
@@ -79,7 +80,7 @@ function Profile() {
 
                 {
                   <button
-                    onClick={() => Logout()}
+                    onClick={() => Logout(navigate)}
                     className="btn-outline-slate"
                   >
                     Sign Out

@@ -1,12 +1,13 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CheckToken from "../utils/CheckToken";
 import Logout from "../utils/Logout";
 
 function Header() {
   let [token, setToken] = useState("");
+  let navigate = useNavigate();
 
   useEffect(() => {
     let token = CheckToken();
@@ -121,7 +122,7 @@ function Header() {
                           <Link
                             className="actionbg"
                             onClick={() => {
-                              Logout();
+                              Logout(navigate);
                             }}
                           >
                             Logout
