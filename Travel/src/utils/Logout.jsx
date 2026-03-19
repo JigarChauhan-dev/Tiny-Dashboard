@@ -1,12 +1,13 @@
 import cookie from "js-cookie";
 
 function Logout() {
-
   cookie.remove("token");
-   if (navigate) {
+  if (navigate) {
+    alert("Logout Successful");
     navigate("/login");
   } else {
-    window.location.href = "/login"; 
+    alert("Logout Successful");
+    window.location.href = "/login";
   }
 }
 
