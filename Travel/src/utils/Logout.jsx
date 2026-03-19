@@ -8,7 +8,7 @@ function Logout(navigate) {
   } else {
     window.location.href = "/login";
   }
-  console.log("navigate:", navigate);
+  console.log("navigate:", navigate());
 }
 
 function LogoutWithoutNotification() {
