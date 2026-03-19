@@ -1,6 +1,6 @@
 import cookie from "js-cookie";
 
-function Logout() {
+function Logout(navigate) {
   cookie.remove("token");
   alert("Logout Successful");
   if (navigate) {
@@ -8,6 +8,7 @@ function Logout() {
   } else {
     window.location.href = "/login";
   }
+  console.log("navigate:", navigate);
 }
 
 function LogoutWithoutNotification() {
