@@ -1,21 +1,12 @@
 import cookie from "js-cookie";
-import {useNavigate } from "react-router-dom";
 
 function Logout() {
-  // let navigate = useNavigate();
 
-  // try {
-  //   cookie.remove("token");
-  //   alert("Logout Successful");
-  //   navigate("/login");
-  // } catch (error) {
-  //   console.log(error);
-  // }
   cookie.remove("token");
    if (navigate) {
     navigate("/login");
   } else {
-    window.location.href = "/login"; // fallback
+    window.location.href = "/login"; 
   }
 }
 
