@@ -3,12 +3,7 @@ import cookie from "js-cookie";
 function Logout() {
   cookie.remove("token");
   alert("Logout Successful");
-  if (navigate) {
-    navigate("/login");
-  } else {
-    window.location.href = "/login";
-  }
-  console.log("navigate:", navigate());
+  window.location.href = "/login";
 }
 
 function LogoutWithoutNotification() {
