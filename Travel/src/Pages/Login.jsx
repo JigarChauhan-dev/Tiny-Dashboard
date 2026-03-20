@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { toast } from "react-toastify";
 
 function Login() {
   let [showPassword, setShowPassword] = useState(false);
@@ -36,14 +35,12 @@ function Login() {
       if (response.data.token) {
         Cookies.set("token", response.data.token);
 
-        
-        toast.success("Login Successful ✅");
+        alert("Login Successful");
         window.location.href = "/";
       }
     } catch (error) {
       console.log(error);
-      
-      toast.error("Login Failed");
+      alert("Login Failed");
     } finally {
       setLoading(false); 
     }
