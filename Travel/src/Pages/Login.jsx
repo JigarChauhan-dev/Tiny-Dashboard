@@ -43,7 +43,7 @@ function Login() {
       console.log(error);
       toast.error("Login Failed");
     } finally {
-      setLoading(false); 
+      setLoading(false) 
     }
   }
 
