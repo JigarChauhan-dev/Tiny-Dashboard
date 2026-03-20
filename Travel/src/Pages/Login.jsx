@@ -138,7 +138,6 @@ function Login() {
                   className="buttonbg signinbutton"
                   style={{
                     backgroundColor: "black",
-                    cursor: "pointer",
                     cursor: loading ? "not-allowed" : "pointer",
                     opacity: loading ? 0.7 : 1,
                   }}
