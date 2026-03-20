@@ -36,14 +36,17 @@ function Login() {
       if (response.data.token) {
         Cookies.set("token", response.data.token);
 
-        toast.success("Login Successful");
-        window.location.href = "/";
+        toast.success("Login Successful", {
+          onclose: () => {
+            window.location.href = "/";
+          },
+        });
       }
     } catch (error) {
       console.log(error);
       toast.error("Login Failed");
     } finally {
-      setLoading(false) 
+      setLoading(false);
     }
   }
 

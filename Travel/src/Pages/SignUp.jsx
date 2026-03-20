@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const [loading, setLoading] = useState(false);
@@ -96,14 +97,17 @@ function SignUp() {
       console.log(response.data.message);
 
       if (response.status == 200 || response.status == 201) {
-        alert(response.data.message);
-        window.location.href="/login";
+        toast.success("Signup Successful", {
+          onClose: () => {
+            window.location.href = "/login";
+          },
+        });
       }
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Signup failed");
-    }finally {
-      setLoading(false); 
+      toast.error("Signup Failed");
+    } finally {
+      setLoading(false);
     }
   }
 
