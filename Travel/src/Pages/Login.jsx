@@ -37,7 +37,7 @@ function Login() {
         Cookies.set("token", response.data.token);
 
         toast.success("Login Successful", {
-          onclose: () => {
+          onClose: () => {
             window.location.href = "/";
           },
         });
