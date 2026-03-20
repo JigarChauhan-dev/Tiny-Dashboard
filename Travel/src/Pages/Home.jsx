@@ -8,12 +8,12 @@ function Home() {
   const [feedback, setFeedback] = useState([]);
 
   async function FetchProfile() {
-    try {
+    // try {
       let response = await api.get("/user/profile/profilehome");
       setUser(response.data.user);
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
   console.log(user);
 
