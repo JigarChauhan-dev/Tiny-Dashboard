@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useParams, useSearchParams } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { toast } from "react-toastify";
 
 function ResetPassword() {
   const { token } =  useParams();
@@ -24,7 +25,7 @@ function ResetPassword() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      toast.success("Passwords do not match");
       return;
     }
 
@@ -37,11 +38,14 @@ function ResetPassword() {
         }
       );
 
-      alert(res.data.message || "Password reset successful");
-      window.location.href = "/login";
+      toast.success("Password reset successful", {
+          onClose: () => {
+            window.location.href = "/login";
+          },
+        });
     } catch (error) {
       console.log(error);
-      alert("Reset password failed");
+      toast.error("Reset password failed");
     }
   }
 

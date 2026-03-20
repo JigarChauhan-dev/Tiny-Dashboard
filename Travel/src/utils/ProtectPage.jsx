@@ -1,9 +1,13 @@
+import { toast } from "react-toastify";
 import CheckToken from "./CheckToken";
 
 function ProtectPage({ children }){
     if(!CheckToken()){
-        alert("Kindly Login First.");
-        window.location.href = "/login";
+        toast.success("Kindly Login First.", {
+          onClose: () => {
+            window.location.href = "/login";
+          },
+        });
     }
     return children;
 }

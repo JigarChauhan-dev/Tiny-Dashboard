@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { toast } from "react-toastify";
 
 function EditProfile() {
   let profile = useLocation().state;
@@ -24,10 +25,13 @@ function EditProfile() {
       const response = await api.put(`/user/profile/update/${id}`, formData);
 
       if(response.data.status){
-        alert("Profile Updated Successfully..");
+        toast.success("Profile Updated Successfully..", {
+          onClose: () => {
+            window.location.href = "/profile";
+          },
+        });
       }
 
-      window.location.href="/profile";
     } catch (error) {
       console.log(error);
       alert("Update Failed");

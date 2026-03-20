@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
 import { LogoutWithoutNotification } from "../utils/Logout";
 import { FaStar } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function FeedBack() {
   // --- 1. INTERACTIVE RATING STATE ---
@@ -49,7 +50,11 @@ function FeedBack() {
 
     try {
       let response = await api.post("/user/feedbacks/submit", feedback);
-      alert("Feedback Submitted Successfully!");
+      toast.success("Login Successful", {
+          onClose: () => {
+            window.location.href = "/";
+          },
+        });
       setFeedback({
         username: "",
         email: "",
@@ -59,8 +64,6 @@ function FeedBack() {
       });
       if (response.data.token) {
         Cookies.set("token", response.data.token);
-
-        window.location.href = "/";
       }
     } catch (error) {
       console.log(error);

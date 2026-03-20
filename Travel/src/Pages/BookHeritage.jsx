@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { toast } from "react-toastify";
 
 function BookHeritage() {
   // const { id } = useParams();
   const today = new Date().toISOString().split("T")[0];
   const heritageData = useLocation().state;
-  const [heritage , setHeritage] = useState(heritageData);
+  const [heritage, setHeritage] = useState(heritageData);
   console.log(heritage);
-  
+
   let id = heritage._id;
   let ticketprice = heritage.ticket_price;
   console.log(ticketprice);
-  
 
   let [booking, setBooking] = useState({
     date: "",
@@ -20,7 +20,6 @@ function BookHeritage() {
     loginId: "",
     heritageId: id,
   });
-
 
   const [userProfile, setUserProfile] = useState({});
 
@@ -83,14 +82,17 @@ function BookHeritage() {
             );
             console.log(response.data);
             setBooking(response.data.data);
-            alert("Your visit has been scheduled successfully.");
             setBooking({
               date: "",
               reason: "",
               loginId: "",
               heritageId: id,
             });
-            window.location.href = "/bookinghistory";
+            toast.success("Your visit has been scheduled successfully.", {
+              onClose: () => {
+                window.location.href = "/bookinghistory";
+              },
+            });
           } catch (error) {
             console.log(e);
           }
