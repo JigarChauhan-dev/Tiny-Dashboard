@@ -5,7 +5,7 @@ import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function SignUp() {
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
     username: "",
@@ -80,6 +80,7 @@ function SignUp() {
 
   async function handelSubmit(e) {
     e.preventDefault();
+    setLoading(true);
     if (!validateForm()) return;
     console.log("Form Submitted.");
 
@@ -96,11 +97,13 @@ function SignUp() {
 
       if (response.status == 200 || response.status == 201) {
         alert(response.data.message);
-        navigate("/login");
+        window.location.href="/login";
       }
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || "Signup failed");
+    }finally {
+      setLoading(false); 
     }
   }
 

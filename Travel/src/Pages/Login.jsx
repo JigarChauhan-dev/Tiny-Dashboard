@@ -42,7 +42,7 @@ function Login() {
       console.log(error);
       alert("Login Failed");
     } finally {
-      setLoading(false); // ✅ STOP loading (important)
+      setLoading(false); 
     }
   }
 
