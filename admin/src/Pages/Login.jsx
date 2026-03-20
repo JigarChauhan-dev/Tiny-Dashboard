@@ -5,7 +5,7 @@ import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
     email: "",
@@ -39,7 +39,7 @@ function Login() {
         });
 
         alert("Login Successful");
-        navigate("/");
+        window.location.href = "/"
       }
     } catch (error) {
       setUser({
@@ -47,7 +47,7 @@ function Login() {
         password: "",
       });
       alert("Invalid Details");
-      navigate("/login");
+      window.location.href = "/login"
     }
   }
   console.log(user);
