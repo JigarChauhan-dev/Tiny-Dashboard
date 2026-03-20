@@ -9,7 +9,6 @@ function Login() {
   let [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   let [user, setUser] = useState({
     email: "",
     password: "",
@@ -25,6 +24,7 @@ function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
 
     try {
       let response = await axios.post(
@@ -41,19 +41,10 @@ function Login() {
     } catch (error) {
       console.log(error);
       alert("Login Failed");
+    } finally {
+      setLoading(false); // ✅ STOP loading (important)
     }
   }
-  const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-
-  console.log("Login clicked");
-
-  // simulate API call
-  setTimeout(() => {
-    setLoading(false);
-  }, 2000);
-};
 
   return (
     <div>
@@ -144,7 +135,12 @@ function Login() {
                   type="submit"
                   value={loading ? "Logging in..." : "Login"}
                   className="buttonbg signinbutton"
-                  style={{ backgroundColor: "black", cursor: "pointer" }}
+                  style={{
+                    backgroundColor: "black",
+                    cursor: "pointer",
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.7 : 1,
+                  }}
                 />
                 <p className="signup">
                   Have not an account yet?
