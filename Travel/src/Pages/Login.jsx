@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { toast } from "react/toastify";
+import { toast } from "react-toastify";
 
 function Login() {
   let [showPassword, setShowPassword] = useState(false);
