@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { useEffect, useState } from "react";
 
 function Home() {
   let [user, setUser] = useState({});
   const [heritageSites, setHeritageSites] = useState([]);
-  const [feedback, setFeedback] = useState([]);
+  const [feedback, setFeedback] = useState([])
 
   async function FetchProfile() {
-    // try {
+    // try { 
       let response = await api.get("/user/profile/profilehome");
       setUser(response.data.user);
     // } catch (error) {
