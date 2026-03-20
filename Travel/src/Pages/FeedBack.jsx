@@ -50,7 +50,7 @@ function FeedBack() {
 
     try {
       let response = await api.post("/user/feedbacks/submit", feedback);
-      toast.success("Login Successful", {
+      toast.success("Feedback Submited", {
           onClose: () => {
             window.location.href = "/";
           },

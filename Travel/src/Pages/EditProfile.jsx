@@ -34,7 +34,7 @@ function EditProfile() {
 
     } catch (error) {
       console.log(error);
-      alert("Update Failed");
+      toast.error("Update Failed");
     }
   }
 
