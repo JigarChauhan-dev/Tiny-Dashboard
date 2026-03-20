@@ -35,7 +35,8 @@ function Login() {
       if (response.data.token) {
         Cookies.set("token", response.data.token);
 
-        alert("Login Successful");
+        // alert("Login Successful");
+        toast.success("Login Successful ✅");
         window.location.href = "/";
       }
     } catch (error) {
