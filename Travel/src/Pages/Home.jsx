@@ -1,7 +1,6 @@
-
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
-import { useEffect, useState } from "react";
 
 function Home() {
   let [user, setUser] = useState({});
@@ -9,12 +8,12 @@ function Home() {
   const [feedback, setFeedback] = useState([])
 
   async function FetchProfile() {
-    // try { 
+    try { 
       let response = await api.get("/user/profile/profilehome");
       setUser(response.data.user);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
   console.log(user);
 
