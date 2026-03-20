@@ -40,7 +40,7 @@ import ResetPassword from "./Pages/ResetPassword";
 import Profile from "./Pages/Profile";
 import EditProfile from "./Pages/EditProfile";
 // import EditProfile from "./utils/EditProfile";
-
+import { ToastContainer, toast } from "react-toastify";
 
 function App() {
   return (
