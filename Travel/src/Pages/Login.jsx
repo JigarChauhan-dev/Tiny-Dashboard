@@ -7,6 +7,9 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   let [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+
   let [user, setUser] = useState({
     email: "",
     password: "",
@@ -40,6 +43,17 @@ function Login() {
       alert("Login Failed");
     }
   }
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  console.log("Login clicked");
+
+  // simulate API call
+  setTimeout(() => {
+    setLoading(false);
+  }, 2000);
+};
 
   return (
     <div>
@@ -128,7 +142,7 @@ function Login() {
                 </label>
                 <input
                   type="submit"
-                  value={"Login"}
+                  value={loading ? "Logging in..." : "Login"}
                   className="buttonbg signinbutton"
                   style={{ backgroundColor: "black", cursor: "pointer" }}
                 />
