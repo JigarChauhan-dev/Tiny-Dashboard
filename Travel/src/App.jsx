@@ -5,7 +5,6 @@ import Footer from "./Common/Footer";
 import About from "./Pages/About";
 import Faq from "./Pages/Faq";
 import Error from "./Pages/Error";
-import SearchResult from "./Pages/SearchResult";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
 import Contact from './Pages/Contact';
@@ -35,7 +34,6 @@ function App() {
           <Route path="/about" element={<About/>} />
           <Route path="/faq" element={<Faq/>} />
           <Route path="/404" element={<Error/>} />
-          <Route path="/Search" element={<SearchResult/>} />
           <Route path="/login" element={<Login/>} />
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/contact" element={ <Contact/>  } />
