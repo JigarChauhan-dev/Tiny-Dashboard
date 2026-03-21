@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { toast } from "react-toastify";
 
 function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject : "",
+    subject: "",
     message: "",
   });
 
@@ -26,18 +27,20 @@ function Contact() {
     try {
       let res = await api.post("/user/inquiries/submit", formData);
 
-      alert(res.data.message);
-
       setFormData({
         name: "",
         email: "",
-        subject : "",
+        subject: "",
         message: "",
       });
-      window.location.href = "/"
+      toast.success("Message Sent Successfully", {
+        onclose: () => {
+          window.location.href = "/";
+        },
+      });
     } catch (error) {
       console.log(error);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
