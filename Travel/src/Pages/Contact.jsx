@@ -34,7 +34,7 @@ function Contact() {
         message: "",
       });
       toast.success("Message Sent Successfully", {
-        onclose: () => {
+        onClose: () => {
           window.location.href = "/";
         },
       });
