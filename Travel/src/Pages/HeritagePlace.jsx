@@ -7,29 +7,41 @@ function HeritagePlace() {
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
-const { data: heritageSites = [] } = useQuery({
-  queryKey: ["heritage"],
-  queryFn: async () => {
-    const res = await api.get("/user/heritage/all");
-    return res.data.data || [];
-  },
-});
+  const {
+    data: heritageSites = [],
+    isLoading: heritageLoading,
+    isError: heritageError,
+  } = useQuery({
+    queryKey: ["heritage"],
+    queryFn: async () => {
+      const res = await api.get("/user/heritage/all");
+      return res.data.data || [];
+    },
+  });
 
-const { data: states = [] } = useQuery({
-  queryKey: ["states"],
-  queryFn: async () => {
-    const res = await api.get("/user/states/all");
-    return res.data.data || [];
-  },
-});
+  const { data: states = [] } = useQuery({
+    queryKey: ["states"],
+    queryFn: async () => {
+      const res = await api.get("/user/states/all");
+      return res.data.data || [];
+    },
+  });
 
-const { data: cities = [] } = useQuery({
-  queryKey: ["cities"],
-  queryFn: async () => {
-    const res = await api.get("/user/cities/all");
-    return res.data.data || [];
-  },
-});
+  const { data: cities = [] } = useQuery({
+    queryKey: ["cities"],
+    queryFn: async () => {
+      const res = await api.get("/user/cities/all");
+      return res.data.data || [];
+    },
+  });
+
+  if (heritageLoading) {
+    return <h2 style={{ textAlign: "center" }}>Loading heritage sites...</h2>;
+  }
+
+  if (heritageError) {
+    return <h2 style={{ textAlign: "center" }}>Failed to load data ❌</h2>;
+  }
 
   console.log(cities);
 
