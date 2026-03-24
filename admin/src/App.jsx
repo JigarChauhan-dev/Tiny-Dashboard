@@ -69,11 +69,13 @@ import AdminManageState from "./Pages/AdminManageState"
 import AdminManageInquiries from "./Pages/AdminManageInquiries"
 import AdminManageBooking from "./Pages/AdminManageBooking"
 import ProtectPages from "./utils/ProtectPage"
+import { ToastContainer } from "react-toastify"
 
 function App() {
 
   return (
     <>
+    <ToastContainer  position="top-right" autoClose={1500} theme="colored"/>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<ProtectPages><Home/></ProtectPages> } />

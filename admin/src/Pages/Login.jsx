@@ -3,8 +3,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function Login() {
+  const [clicked, setClicked] = useState(false);
   const [loading, setLoading] = useState(false);
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
@@ -29,7 +31,7 @@ function Login() {
         user,
       );
       let token = response.data.token;
-      
+
       if (token) {
         cookie.set("token", token, { expires: 1 });
 
@@ -38,16 +40,18 @@ function Login() {
           password: "",
         });
 
-        alert("Login Successful");
-        window.location.href = "/"
+        toast.success("Login Successful",{onClose:()=>{
+          window.location.href = "/adminmanageheritage"
+        }})
       }
     } catch (error) {
       setUser({
         email: "",
         password: "",
       });
-      alert("Invalid Details");
-      window.location.href = "/login"
+      toast.error("Invalid Details",{onClose:()=>{
+        window.location.href = "/login";
+      }})
     }
   }
   console.log(user);
@@ -131,8 +135,12 @@ function Login() {
                 in{" "}
               </label>
             </div>
-            <button className="btn btn-lg btn-primary btn-block" type="submit">
-              Let me in
+            <button
+              className="btn btn-lg btn-primary btn-block"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Let me in"}
             </button>
             <p className="mt-5 mb-3 text-muted">© 2026</p>
           </form>
