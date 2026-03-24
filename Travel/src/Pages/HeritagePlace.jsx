@@ -20,7 +20,6 @@ function HeritagePlace() {
        return [];
     }
   }
-
   async function fetchStates() {
     try {
       const res = await api.get("/user/states/all");
