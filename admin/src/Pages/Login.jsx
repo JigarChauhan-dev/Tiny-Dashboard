@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 function Login() {
-  const [clicked, setClicked] = useState(false);
   const [loading, setLoading] = useState(false);
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
