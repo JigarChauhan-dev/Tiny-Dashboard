@@ -4,69 +4,34 @@ import api from "../utils/AxiosConfig";
 import { useQuery } from "@tanstack/react-query";
 
 function HeritagePlace() {
-  const [heritageSites, setHeritageSites] = useState([]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
-  async function fetchHeritage() {
-    try {
-      const res = await api.get("/user/heritage/all");
-      setHeritageSites(res.data.data || []);
-      return data;
-    } catch (error) {
-      console.log("Heritage fetch error", error);
-       return [];
-    }
-  }
-  async function fetchStates() {
-    try {
-      const res = await api.get("/user/states/all");
-      setStates(res.data.data || []);
-      return data;
-    } catch (error) {
-      console.log("State fetch error", error);
-       return [];
-    }
-  }
+const { data: heritageSites = [] } = useQuery({
+  queryKey: ["heritage"],
+  queryFn: async () => {
+    const res = await api.get("/user/heritage/all");
+    return res.data.data || [];
+  },
+});
 
-  console.log(states);
+const { data: states = [] } = useQuery({
+  queryKey: ["states"],
+  queryFn: async () => {
+    const res = await api.get("/user/states/all");
+    return res.data.data || [];
+  },
+});
 
-  async function fetchCities() {
-    try {
-      const res = await api.get("/user/cities/all");
-      console.log(res.data);
-      setCities(res.data.data || []);
-      return data;
-    } catch (error) {
-      console.log("City fetch error", error);
-       return [];
-    }
-  }
+const { data: cities = [] } = useQuery({
+  queryKey: ["cities"],
+  queryFn: async () => {
+    const res = await api.get("/user/cities/all");
+    return res.data.data || [];
+  },
+});
 
   console.log(cities);
-
-  // useEffect(() => {
-  //   fetchHeritage();
-  //   fetchStates();
-  //   fetchCities();
-  // }, []);
-  
-  useQuery({
-  queryKey: ["heritage"],
-  queryFn: fetchHeritage,
-});
-
-useQuery({
-  queryKey: ["states"],
-  queryFn: fetchStates,
-});
-
-useQuery({
-  queryKey: ["cities"],
-  queryFn: fetchCities,
-});
 
   const filteredHeritage = heritageSites.filter((site) => {
     if (selectedCity) {
