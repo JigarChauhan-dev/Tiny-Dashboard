@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { useQuery } from "@tanstack/react-query";
 
 function HeritagePlace() {
   const [heritageSites, setHeritageSites] = useState([]);
@@ -13,8 +14,10 @@ function HeritagePlace() {
     try {
       const res = await api.get("/user/heritage/all");
       setHeritageSites(res.data.data || []);
+      return data;
     } catch (error) {
       console.log("Heritage fetch error", error);
+       return [];
     }
   }
 
@@ -22,8 +25,10 @@ function HeritagePlace() {
     try {
       const res = await api.get("/user/states/all");
       setStates(res.data.data || []);
+      return data;
     } catch (error) {
       console.log("State fetch error", error);
+       return [];
     }
   }
 
@@ -34,18 +39,35 @@ function HeritagePlace() {
       const res = await api.get("/user/cities/all");
       console.log(res.data);
       setCities(res.data.data || []);
+      return data;
     } catch (error) {
       console.log("City fetch error", error);
+       return [];
     }
   }
 
   console.log(cities);
 
-  useEffect(() => {
-    fetchHeritage();
-    fetchStates();
-    fetchCities();
-  }, []);
+  // useEffect(() => {
+  //   fetchHeritage();
+  //   fetchStates();
+  //   fetchCities();
+  // }, []);
+  
+  useQuery({
+  queryKey: ["heritage"],
+  queryFn: fetchHeritage,
+});
+
+useQuery({
+  queryKey: ["states"],
+  queryFn: fetchStates,
+});
+
+useQuery({
+  queryKey: ["cities"],
+  queryFn: fetchCities,
+});
 
   const filteredHeritage = heritageSites.filter((site) => {
     if (selectedCity) {
