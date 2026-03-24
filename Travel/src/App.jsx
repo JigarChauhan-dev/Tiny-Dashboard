@@ -45,7 +45,7 @@ function App() {
           <Route path="/feedback" element={<ProtectPage> <FeedBack/> </ProtectPage> } />
           <Route path="/hoteldetail/:id" element={<HotelDetail/>} />
           <Route path="/heritagedetail/:id" element={<HeritageDetail/>} />
-          <Route path="/bookheritage" element={<BookHeritage/>} />
+          <Route path="/bookheritage" element={<ProtectPage> <BookHeritage/> </ProtectPage>} />
           <Route path="/bookinghistory" element={<BookingHistory/>} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
