@@ -2,6 +2,7 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminBookingHistory() {
   let [user, setUser] = useState({});
@@ -16,7 +17,7 @@ function AdminBookingHistory() {
       setUser(response.data.user);
     } catch (error) {
       console.log(error);
-      alert("You can't be access this page");
+      toast.success("You can't be access this page");
     }
   }
   console.log(user);

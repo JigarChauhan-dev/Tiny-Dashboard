@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageHeritage() {
   const [heritage, setHeritage] = useState([]);
@@ -108,10 +109,10 @@ function AdminManageHeritage() {
     try {
     if (editId) {
       await api.put(`/heritage/update/${editId}`, formData2);
-      alert("Updated successfully");
+      toast.success("Updated successfully");
     } else {
       await api.post("/heritage/add", formData2);
-      alert("Added successfully");
+      toast.success("Added successfully");
     }
 
     setShowForm(false);

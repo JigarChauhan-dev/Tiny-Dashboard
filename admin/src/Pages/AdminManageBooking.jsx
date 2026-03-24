@@ -2,6 +2,7 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageBooking() {
   const [bookings, setBookings] = useState([]);
@@ -29,11 +30,11 @@ function AdminManageBooking() {
         status: status,
       });
 
-      alert("Status updated successfully");
+      toast.success("Status updated successfully");
       fetchBookings();
     } catch (error) {
       console.log(error);
-      alert("Failed to update status");
+      toast.success("Failed to update status");
     }
   };
 

@@ -2,6 +2,7 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageFeedback() {
   const [data, setData] = useState([]);
@@ -37,7 +38,7 @@ function AdminManageFeedback() {
       }
     } catch (err) {
       console.log(err);
-      alert("Error deleting feedback");
+      toast.error("Error deleting feedback");
     }
   };
 

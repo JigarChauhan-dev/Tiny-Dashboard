@@ -2,6 +2,7 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageHotel() {
   const [hotels, setHotels] = useState([]);
@@ -96,10 +97,10 @@ function AdminManageHotel() {
     // try {
     if (editId) {
       await api.put(`/hotels/update/${editId}`, formData2);
-      alert("Hotel Updated Successfully");
+      toast.success("Hotel Updated Successfully");
     } else {
       await api.post("/hotels/add", formData2);
-      alert("Hotel Added Successfully");
+      toast.success("Hotel Added Successfully");
     }
 
     setShowForm(false);
