@@ -2,6 +2,7 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageLocation() {
   const [cities, setCities] = useState([]);
@@ -54,7 +55,7 @@ function AdminManageLocation() {
     e.preventDefault();
 
     if (!formData.city_name || !formData.state_id) {
-      return alert("City name and State required");
+      return toast.error("City name and State required");
     }
 
     if (formData._id) {
@@ -64,6 +65,7 @@ function AdminManageLocation() {
         state_id: formData.state_id,
         status: formData.status,
       });
+      toast.success("City updated successfully")
     } else {
       // ADD
       await api.post("/cities/add", {
@@ -71,6 +73,7 @@ function AdminManageLocation() {
         state_id: formData.state_id,
         status: formData.status,
       });
+      toast.success("City added successfully")
     }
 
     fetchCities();

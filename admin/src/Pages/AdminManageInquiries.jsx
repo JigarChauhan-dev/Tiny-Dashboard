@@ -2,12 +2,11 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageInquiries() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
 
   async function FetchData() {
     try {
@@ -17,6 +16,7 @@ function AdminManageInquiries() {
       setLoading(false);
     } catch (error) {
       console.log("Fetch Error:", error);
+      toast.error("Failed to load inquiries");
       setLoading(false);
     }
   }
@@ -32,19 +32,14 @@ function AdminManageInquiries() {
       const response = await api.delete(`/admin/inquiries/remove/${id}`);
       if (response.data.status) {
         setData((prev) => prev.filter((item) => item._id !== id));
-        triggerToast("Inquiry deleted successfully");
+        toast.success("Inquiry deleted successfully");
       }
     } catch (err) {
       console.log(err);
-      alert("Error deleting inquiry");
+      toast.error("Error deleting inquiry");
     }
   };
 
-  const triggerToast = (msg) => {
-    setToastMsg(msg);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
-  };
 
   return (
     <div className="wrapper">
@@ -77,7 +72,7 @@ function AdminManageInquiries() {
               {loading ? (
                 <tr>
                   <td colSpan="6" align="center">
-                    Loading...
+                    ⏳ Loading inquiries...
                   </td>
                 </tr>
               ) : data.length > 0 ? (
@@ -110,7 +105,6 @@ function AdminManageInquiries() {
         </div>
       </div>
 
-      {showToast && <div className="toast-notification">{toastMsg}</div>}
     </div>
   );
 }

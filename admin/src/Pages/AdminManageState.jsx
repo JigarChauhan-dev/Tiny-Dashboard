@@ -1,7 +1,8 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageState() {
   const [states, setStates] = useState([]);
@@ -41,7 +42,7 @@ function AdminManageState() {
     e.preventDefault();
 
     if (!formData.state_name) {
-      return alert("State name required");
+      return toast.error("State name required");
     }
 
     if (formData._id) {
@@ -50,12 +51,15 @@ function AdminManageState() {
         state_name: formData.state_name,
         status: formData.status,
       });
+
+      toast.success("State updated successfully");
     } else {
       // ADD
       await api.post("/states/add", {
         state_name: formData.state_name,
         status: formData.status,
       });
+      toast.success("State added successfully");
     }
 
     fetchStates();
@@ -151,7 +155,6 @@ function AdminManageState() {
               ))}
             </tbody>
           </table>
-
         </div>
       </div>
     </div>

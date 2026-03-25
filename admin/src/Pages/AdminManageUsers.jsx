@@ -2,6 +2,7 @@ import  { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
+import { toast } from "react-toastify";
 
 function AdminManageUsers() {
   const [users, setUsers] = useState([]);
@@ -26,6 +27,7 @@ function AdminManageUsers() {
   const deleteUser = async (id) => {
     if (window.confirm("Delete user?")) {
       await api.delete(`/admin/manage-users/remove/${id}`);
+      toast.success("User deleted successfully");
       setUsers(users.filter((u) => u._id !== id));
     }
   };

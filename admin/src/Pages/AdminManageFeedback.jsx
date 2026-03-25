@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
@@ -8,8 +8,6 @@ function AdminManageFeedback() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
 
   async function FetchData() {
     try {
@@ -19,6 +17,7 @@ function AdminManageFeedback() {
       setLoading(false);
     } catch (error) {
       console.log("Fetch Error:", error);
+      toast.error("Failed to load feedback");
       setLoading(false);
     }
   }
@@ -34,7 +33,7 @@ function AdminManageFeedback() {
       const response = await api.delete(`/feedbacks/remove/${id}`);
       if (response.data.status) {
         setData((prev) => prev.filter((f) => f._id !== id));
-        triggerToast("Feedback deleted successfully");
+        toast.success("Feedback deleted successfully");
       }
     } catch (err) {
       console.log(err);
@@ -42,18 +41,10 @@ function AdminManageFeedback() {
     }
   };
 
-  const triggerToast = (msg) => {
-    setToastMsg(msg);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
-  };
-
   const filteredData = data.filter(
     (f) =>
-      (f.username || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (f.message || "").toLowerCase().includes(searchTerm.toLowerCase())
+      (f.username || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (f.message || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -63,11 +54,10 @@ function AdminManageFeedback() {
         <Header />
 
         <div className="admin-body">
-
           {/* HEADER */}
           <div className="page-header">
             <h2>User Feedback</h2>
-{/* 
+            {/* 
             <input
               type="text"
               placeholder="Search feedback..."
@@ -101,7 +91,11 @@ function AdminManageFeedback() {
                 filteredData.map((f) => (
                   <tr key={f._id}>
                     <td>{f.username || "Guest"}</td>
-                    <td>{f.createdAt}</td>
+                    <td>
+                      {f.createdAt
+                        ? new Date(f.createdAt).toLocaleDateString()
+                        : "N/A"}
+                    </td>
                     <td style={{ color: "#f39c12" }}>
                       {"★".repeat(f.rating || 0)}
                       {"☆".repeat(5 - (f.rating || 0))}
@@ -128,8 +122,6 @@ function AdminManageFeedback() {
           </table>
         </div>
       </div>
-
-      {showToast && <div className="toast-notification">{toastMsg}</div>}
     </div>
   );
 }
