@@ -14087,3 +14087,24 @@ textarea { margin-bottom: 25px; resize: none; }
   }
 }
 
+.hotel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* ✅ 3 columns */
+  gap: 20px;
+}
+
+.hotel-item {
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .hotel-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .hotel-grid {
+    grid-template-columns: 1fr;
+  }
+}

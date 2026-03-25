@@ -68,34 +68,33 @@ function Hotels() {
           {/* --- RESULTS GRID --- */}
           <div className="heritage-grid mb-5">
             <div className="row">
-              {hotel.length > 0 &&
-                hotel.map((hotel) => (
-                  <div
-                    className="col-lg-4 col-md-6 col-12 mb-4"
-                    key={hotel._id}
-                  >
-                    <div className="heritage-card fade-in">
-                      <div className="card-image">
-                        <img
-                          src={`${api.defaults.baseURL}/uploads/heritage/${hotel.image_path}`}
-                          alt={hotel.hotel_name}
-                        />
-                      </div>
-                      <div className="card-content text-center">
-                        <h3 className="fw-bold mb-4">{hotel.hotel_name}</h3>
+              <div className="hotel-grid">
+                {hotel.length > 0 &&
+                  hotel.map((hotel) => (
+                    <div className="hotel-item" key={hotel._id}>
+                      <div className="heritage-card fade-in">
+                        <div className="card-image">
+                          <img
+                            src={`${api.defaults.baseURL}/uploads/heritage/${hotel.image_path}`}
+                            alt={hotel.hotel_name}
+                          />
+                        </div>
+                        <div className="card-content text-center">
+                          <h3 className="fw-bold mb-4">{hotel.hotel_name}</h3>
 
-                        <div className="mt-auto">
-                          <Link
-                            to={`/hoteldetail/${hotel._id}`}
-                            className="view-btn w-100"
-                          >
-                            View Details
-                          </Link>
+                          <div className="mt-auto">
+                            <Link
+                              to={`/hoteldetail/${hotel._id}`}
+                              className="view-btn w-100"
+                            >
+                              View Details
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </div>
           </div>
         </div>
