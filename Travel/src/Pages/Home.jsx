@@ -4,38 +4,41 @@ import api from "../utils/AxiosConfig";
 import { useQuery } from "@tanstack/react-query";
 
 function Home() {
-
   async function FetchProfile() {
     try {
-      let response = await api.get("/user/profile/profilehome");
+      const response = await api.get("/user/profile/profilehome");
+      console.log("Profile API:", response.data); // ✅ debug
       return response.data.data || [];
     } catch (error) {
-      console.log(error);
+      console.log("Profile API Error:", error);
+      throw error; // ✅ FIX
     }
   }
-  
 
   async function FetchHeritage() {
     try {
-      let response = await api.get("/user/heritage/all");
+      const response = await api.get("/user/heritage/all");
+      console.log("Heritage API:", response.data); // ✅ debug
       return response.data.data || [];
     } catch (error) {
-      console.log(error);
+      console.log("Heritage API Error:", error);
+      throw error;
     }
   }
 
   async function FetchFeedback() {
     try {
-      let response = await api.get("/user/feedbacks/all");
+      const response = await api.get("/user/feedbacks/all");
+      console.log("Feedback API:", response.data); // ✅ debug
       return response.data.data || [];
     } catch (error) {
-      console.log(error);
+      console.log("Feedback API Error:", error);
+      throw error;
     }
   }
-
   const {
     data: heritageSites,
-    isHeritageLoading,
+    isLoading,
     isError,
     error,
   } = useQuery({
@@ -43,22 +46,15 @@ function Home() {
     queryFn: FetchHeritage,
   });
 
-  const {
-    data: feedback,
-    isFeedbackLoading,
-    iserror,
-    Error,
-  } = useQuery({
+  const { data: feedback, isloading } = useQuery({
     queryKey: ["feedback"],
     queryFn: FetchFeedback,
   });
 
-  const {
-    data : user,
-  } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ["user"],
-    queryFn : FetchProfile,
-  })
+    queryFn: FetchProfile,
+  });
 
   console.log(heritageSites);
   console.log(feedback);
@@ -178,11 +174,11 @@ function Home() {
               </p>
 
               <div className="d-grid grid-column-3">
-                {isHeritageLoading ? (
+                {isLoading ? (
                   <p style={{ textAlign: "center" }}>
                     ⏳ Loading heritage sites...
                   </p>
-                ) : isHeritageError ? (
+                ) : isLoading ? (
                   <p style={{ textAlign: "center", color: "red" }}>
                     ❌ Failed to load heritage sites
                   </p>
@@ -310,9 +306,9 @@ function Home() {
             <div className="wrapper">
               <h3 className="title-main">Clients Says</h3>
               <div className="customers-top_sur">
-                {isFeedbackLoading ? (
+                {isLoading ? (
                   <p style={{ textAlign: "center" }}>⏳ Loading feedback...</p>
-                ) : isFeedbackError ? (
+                ) : isError ? (
                   <p style={{ textAlign: "center", color: "red" }}>
                     ❌ Failed to load feedback
                   </p>
