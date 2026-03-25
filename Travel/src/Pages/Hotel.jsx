@@ -23,6 +23,10 @@ function Hotels() {
     queryFn: FetchHotel,
   });
 
+  if (isLoading) {
+    return <h2 className="text-center mt-5">Loading hotels...</h2>;
+  }
+
   if (isError) {
     return <h2 className="text-center mt-5">Error: {error.message}</h2>;
   }
@@ -63,38 +67,36 @@ function Hotels() {
 
           {/* --- RESULTS GRID --- */}
           <div className="heritage-grid mb-5">
-            {isLoading ? (
-              <div className="text-center w-100 py-5">
-                <h3>Loading hotels...</h3>
-              </div>
-            ) : hotel.length > 0 ? (
-              hotel.map((hotel) => (
-                <div className="heritage-card fade-in" key={hotel._id}>
-                  <div className="card-image">
-                    <img
-                      src={`${api.defaults.baseURL}/uploads/heritage/${hotel.image_path}`}
-                      alt={hotel.hotel_name}
-                    />
-                  </div>
-                  <div className="card-content text-center">
-                    <h3 className="fw-bold mb-4">{hotel.hotel_name}</h3>
+            <div className="row">
+              {hotel.length > 0 &&
+                hotel.map((hotel) => (
+                  <div
+                    className="col-lg-4 col-md-6 col-12 mb-4"
+                    key={hotel._id}
+                  >
+                    <div className="heritage-card fade-in">
+                      <div className="card-image">
+                        <img
+                          src={`${api.defaults.baseURL}/uploads/heritage/${hotel.image_path}`}
+                          alt={hotel.hotel_name}
+                        />
+                      </div>
+                      <div className="card-content text-center">
+                        <h3 className="fw-bold mb-4">{hotel.hotel_name}</h3>
 
-                    <div className="mt-auto">
-                      <Link
-                        to={`/hoteldetail/${hotel._id}`}
-                        className="view-btn w-100"
-                      >
-                        View Details
-                      </Link>
+                        <div className="mt-auto">
+                          <Link
+                            to={`/hoteldetail/${hotel._id}`}
+                            className="view-btn w-100"
+                          >
+                            View Details
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center w-100 py-5">
-                <h3>No hotels available</h3>
-              </div>
-            )}
+                ))}
+            </div>
           </div>
         </div>
       </section>

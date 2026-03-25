@@ -178,11 +178,11 @@ function Home() {
                   <p style={{ textAlign: "center" }}>
                     ⏳ Loading heritage sites...
                   </p>
-                ) : isLoading ? (
+                ) : isError ? (
                   <p style={{ textAlign: "center", color: "red" }}>
                     ❌ Failed to load heritage sites
                   </p>
-                ) : heritageSites.length > 0 ? (
+                ) : heritageSites?.[0] ? ( // ✅ check first item instead of length
                   heritageSites.slice(0, 3).map((value) => (
                     <div className="gd-innf" key={value._id}>
                       <Link>
