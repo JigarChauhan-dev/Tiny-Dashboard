@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 function Logout() {
   try {
     cookie.remove("token");
-    toast.success("Logout Successful.", {
+    toast.success("Logout Successful", {
       onClose: () => {
         window.location.href = "/login";
       },
