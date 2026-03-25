@@ -56,7 +56,7 @@ function Login() {
     setLoading(false); 
   }
 }
-  }
+  
   console.log(user);
 
   return (
