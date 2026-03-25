@@ -66,36 +66,38 @@ function Hotels() {
           </div>
 
           {/* --- RESULTS GRID --- */}
-          <div className="heritage-grid mb-5">
-            <div className="row">
-              <div className="hotel-grid">
-                {hotel.length > 0 &&
-                  hotel.map((hotel) => (
-                    <div className="hotel-item" key={hotel._id}>
-                      <div className="heritage-card fade-in">
-                        <div className="card-image">
-                          <img
-                            src={`${api.defaults.baseURL}/uploads/heritage/${hotel.image_path}`}
-                            alt={hotel.hotel_name}
-                          />
-                        </div>
-                        <div className="card-content text-center">
-                          <h3 className="fw-bold mb-4">{hotel.hotel_name}</h3>
+          <div className="heritage-grid">
+            {hotel.length > 0 ? (
+              hotel.map((hotel) => (
+                <div
+                  className="heritage-card w-100"
+                  key={hotel._id}
+                  style={{ marginTop: "30px" }}
+                >
+                  <div className="card-image">
+                    <img
+                      style={{ objectFit: "cover", minHeight: "100px" }}
+                      src={`${api.defaults.baseURL}/uploads/heritage/${hotel.image_path}`}
+                      alt={hotel.hotel_name}
+                    />
+                  </div>
+                  <div className="card-content">
+                    <h3>{hotel.hotel_name}</h3>
 
-                          <div className="mt-auto">
-                            <Link
-                              to={`/hoteldetail/${hotel._id}`}
-                              className="view-btn w-100"
-                            >
-                              View Details
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    <Link to={`/hoteldetail/${hotel._id}`} className="view-btn">
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div
+                className="text-center w-100 py-5"
+                style={{ marginTop: "30px" }}
+              >
+                <h3>No hotels available</h3>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
