@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { useQuery } from "@tanstack/react-query";
 
 function Home() {
-  let [user, setUser] = useState({});
-  const [heritageSites, setHeritageSites] = useState([]);
-  const [feedback, setFeedback] = useState([])
 
   async function FetchProfile() {
-    try { 
+    try {
       let response = await api.get("/user/profile/profilehome");
-      setUser(response.data.user);
+      return response.data.data || [];
     } catch (error) {
       console.log(error);
     }
   }
-  console.log(user);
+  
 
   async function FetchHeritage() {
     try {
       let response = await api.get("/user/heritage/all");
-      setHeritageSites(response.data.data);
+      return response.data.data || [];
     } catch (error) {
       console.log(error);
     }
@@ -29,17 +27,38 @@ function Home() {
   async function FetchFeedback() {
     try {
       let response = await api.get("/user/feedbacks/all");
-      setFeedback(response.data.data);
+      return response.data.data || [];
     } catch (error) {
       console.log(error);
     }
   }
 
-  useEffect(() => {
-    FetchProfile();
-    FetchHeritage();
-    FetchFeedback();
-  }, []);
+  const {
+    data: heritageSites,
+    isHeritageLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["heritageSites"],
+    queryFn: FetchHeritage,
+  });
+
+  const {
+    data: feedback,
+    isFeedbackLoading,
+    iserror,
+    Error,
+  } = useQuery({
+    queryKey: ["feedback"],
+    queryFn: FetchFeedback,
+  });
+
+  const {
+    data : user,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn : FetchProfile,
+  })
 
   console.log(heritageSites);
   console.log(feedback);
@@ -157,32 +176,43 @@ function Home() {
                 forts to sacred temples, reflecting centuries of art and
                 tradition.
               </p>
+
               <div className="d-grid grid-column-3">
-                {heritageSites.slice(0, 3).map((value) => (
-                  <div className="gd-innf">
-                    <Link>
-                      <img
-                        style={{
-                          width: "100%",
-                          height: "220px",
-                          objectFit: "cover",
-                          display: "block",
-                        }}
-                        className="img-responsive"
-                        src={`${api.defaults.baseURL}/uploads/heritage/${value.image_path}`}
-                        alt="image"
-                      />
-                    </Link>
-                    <h3>
+                {isHeritageLoading ? (
+                  <p style={{ textAlign: "center" }}>
+                    ⏳ Loading heritage sites...
+                  </p>
+                ) : isHeritageError ? (
+                  <p style={{ textAlign: "center", color: "red" }}>
+                    ❌ Failed to load heritage sites
+                  </p>
+                ) : heritageSites.length > 0 ? (
+                  heritageSites.slice(0, 3).map((value) => (
+                    <div className="gd-innf" key={value._id}>
+                      <Link>
+                        <img
+                          style={{
+                            width: "100%",
+                            height: "220px",
+                            objectFit: "cover",
+                            display: "block",
+                          }}
+                          className="img-responsive"
+                          src={`${api.defaults.baseURL}/uploads/heritage/${value.image_path}`}
+                          alt={value.name}
+                        />
+                      </Link>
                       <h2
                         className="vv-link"
                         style={{ marginTop: "10px", textAlign: "center" }}
                       >
                         {value.name}
                       </h2>
-                    </h3>
-                  </div>
-                ))}
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ textAlign: "center" }}>No heritage sites found</p>
+                )}
               </div>
             </div>
           </div>
@@ -280,32 +310,45 @@ function Home() {
             <div className="wrapper">
               <h3 className="title-main">Clients Says</h3>
               <div className="customers-top_sur">
-                {feedback.slice(0, 3).map((value) => (
-                  <div className="customers-left_sur" >
-                    <div className="customers_grid" style={{
+                {isFeedbackLoading ? (
+                  <p style={{ textAlign: "center" }}>⏳ Loading feedback...</p>
+                ) : isFeedbackError ? (
+                  <p style={{ textAlign: "center", color: "red" }}>
+                    ❌ Failed to load feedback
+                  </p>
+                ) : feedback.length > 0 ? (
+                  feedback.slice(0, 3).map((value) => (
+                    <div className="customers-left_sur" key={value._id}>
+                      <div
+                        className="customers_grid"
+                        style={{
                           width: "100%",
                           height: "320px",
                           objectFit: "cover",
                           display: "block",
-                        }}>
-                      <p className="sub-test">{value.message}</p>
-                      <div className="customers-bottom_sur">
-                        <div className="custo-img-res">
-                          <img
-                            src={`https://ui-avatars.com/api/?name=${value.username}&background=c5a059&color=fff`}
-                            alt="User"
-                            style={{ borderRadius: "30px", height: "50px" }}
-                          />
-                        </div>
-                        <div className="custo_grid">
-                          <h5 style={{ marginBottom: "10px" }}>
-                            {value.username}
-                          </h5>
+                        }}
+                      >
+                        <p className="sub-test">{value.message}</p>
+                        <div className="customers-bottom_sur">
+                          <div className="custo-img-res">
+                            <img
+                              src={`https://ui-avatars.com/api/?name=${value.username}&background=c5a059&color=fff`}
+                              alt="User"
+                              style={{ borderRadius: "30px", height: "50px" }}
+                            />
+                          </div>
+                          <div className="custo_grid">
+                            <h5 style={{ marginBottom: "10px" }}>
+                              {value.username || "Guest"}
+                            </h5>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p style={{ textAlign: "center" }}>No feedback available</p>
+                )}
               </div>
             </div>
           </div>
