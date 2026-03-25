@@ -23,6 +23,7 @@ function Login() {
 
   async function handelSubmit(e) {
     e.preventDefault();
+    setLoading(true); 
 
     try {
       let response = await axios.post(
@@ -51,7 +52,10 @@ function Login() {
       toast.error("Invalid Details",{onClose:()=>{
         window.location.href = "/login";
       }})
-    }
+    }   finally {
+    setLoading(false); 
+  }
+}
   }
   console.log(user);
 
