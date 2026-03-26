@@ -1,32 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { useQuery } from "@tanstack/react-query";
 
 function HeritageDetail() {
   const { id } = useParams();
-  const [site, setSite] = useState(null);
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  async function FetchHeritageData() {
-    try {
-      setLoading(true);
-
-      let response = await api.get(`/user/heritage/single/${id}`);
-      setSite(response.data.data);
-
-      let guideRes = await api.get(`/guides/by-heritage/${id}`);
-      setGuides(guideRes.data.data || []);
-    } catch (error) {
-      console.error("Fetch Error:", error);
-    } finally {
-      setLoading(false);
-    }
+  async function FetchHeritageData(id) {
+  try {
+    const response = await api.get(`/user/heritage/single/${id}`);
+    return response.data.data; // ✅ return data
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error; // ✅ required for React Query
   }
+}
 
-  useEffect(() => {
-    FetchHeritageData();
-  }, [id]);
+  const {
+  data: site,
+  isLoading,
+  isError,
+  error,
+} = useQuery({
+  queryKey: ["heritage", id],
+  queryFn: () => FetchHeritageData(id),
+  enabled: !!id, // ✅ important
+});
 
   console.log(site);
   // console.log(guides);

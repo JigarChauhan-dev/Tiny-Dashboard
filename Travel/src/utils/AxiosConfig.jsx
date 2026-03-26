@@ -3,7 +3,7 @@ import { LogoutWithoutNotification } from "./Logout";
 import CheckToken from "./CheckToken";
 
 let api = axios.create({
-  baseURL: "https://backend-twxo.onrender.com/api",
+  baseURL:import.meta.env.VITE_API_URL
 });
 
 api.interceptors.request.use((config) => {

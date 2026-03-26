@@ -29,7 +29,7 @@ function Login() {
 
     try {
       let response = await axios.post(
-        "https://backend-twxo.onrender.com/api/auth/login",
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         user,
       );
 

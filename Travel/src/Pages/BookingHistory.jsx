@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
+import { useQuery } from "@tanstack/react-query";
 function BookingHistory() {
-  let [bookingdata, setBookingdata] = useState([]);
   let [userProfile, setUserProfile] = useState({});
 
   async function FetchUserProfile() {
@@ -20,20 +20,28 @@ function BookingHistory() {
 
   async function fetchBooking() {
     try {
-      let response = await api.get("/user/book/all");
-      if (response.data.status) {
-        setBookingdata(response.data.data);
-      }
+      const response = await api.get("/user/book/all");
+      return response.data.data || [];
     } catch (error) {
-      console.error("fetching Error", error);
+      console.error("Booking API Error:", error);
+      throw error;
     }
   }
 
-  useEffect(() => {
-    fetchBooking();
-  }, []);
+  const {
+    data: bookingdata,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: fetchBooking,
+  });
 
   console.log(bookingdata);
+
+  if (isLoading) return <p>Loading bookings...</p>;
+if (isError) return <p>Error: {error.message}</p>;
 
   return (
     <div className="expedition-history-container">

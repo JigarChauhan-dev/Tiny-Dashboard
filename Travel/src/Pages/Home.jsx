@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/AxiosConfig";
 import { useQuery } from "@tanstack/react-query";
@@ -6,19 +6,18 @@ import { useQuery } from "@tanstack/react-query";
 function Home() {
   async function FetchProfile() {
     try {
-      const response = await api.get("/user/profile/profilehome");
-      console.log("Profile API:", response.data); // ✅ debug
-      return response.data.data || [];
+      const res = await api.get("/user/profile/profilehome");
+      return res.data.data;
     } catch (error) {
       console.log("Profile API Error:", error);
-      throw error; // ✅ FIX
+      throw error;
     }
   }
 
   async function FetchHeritage() {
     try {
       const response = await api.get("/user/heritage/all");
-      console.log("Heritage API:", response.data); // ✅ debug
+      console.log("Heritage API:", response.data);
       return response.data.data || [];
     } catch (error) {
       console.log("Heritage API Error:", error);
@@ -29,7 +28,7 @@ function Home() {
   async function FetchFeedback() {
     try {
       const response = await api.get("/user/feedbacks/all");
-      console.log("Feedback API:", response.data); // ✅ debug
+      console.log("Feedback API:", response.data);
       return response.data.data || [];
     } catch (error) {
       console.log("Feedback API Error:", error);
@@ -46,18 +45,22 @@ function Home() {
     queryFn: FetchHeritage,
   });
 
-  const { data: feedback, isloading } = useQuery({
+  const { data: feedback } = useQuery({
     queryKey: ["feedback"],
     queryFn: FetchFeedback,
   });
 
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: FetchProfile,
-  });
+  const {
+  data: profile,
+} = useQuery({
+  queryKey: ["profile"],
+  queryFn: FetchProfile
+});
 
   console.log(heritageSites);
   console.log(feedback);
+  console.log(profile);
+  
 
   return (
     <div>
