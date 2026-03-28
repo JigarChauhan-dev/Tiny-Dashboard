@@ -5,6 +5,7 @@ function ProtectPage({ children }){
     if(!CheckToken()){
         toast.success("Kindly Login First.", {
           onClose: () => {
+            
             window.location.href = "/login";
           },
         });

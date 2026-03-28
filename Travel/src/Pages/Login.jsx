@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function Login() {
   let [showPassword, setShowPassword] = useState(false);
@@ -23,18 +24,20 @@ function Login() {
     }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
+  const Login = async (user) => {
+    let response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/auth/login`,
+      user,
+    );
+    return response.data;
+  };
 
-    try {
-      let response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        user,
-      );
+  const mutation = useMutation({
+    mutationFn: Login,
 
-      if (response.data.token) {
-        Cookies.set("token", response.data.token);
+    onSuccess: (response) => {
+      if (response.token) {
+        Cookies.set("token", response.token);
 
         toast.success("Login Successful", {
           onClose: () => {
@@ -42,12 +45,21 @@ function Login() {
           },
         });
       }
-    } catch (error) {
-      console.log(error);
+      setUser({
+        email: "",
+        password: "",
+      });
+    },
+    onError: () => {
       toast.error("Login Failed");
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+
+    mutation.mutate(user);
   }
 
   return (
@@ -135,16 +147,18 @@ function Login() {
                   <span className="checkmark" />
                   Remember me
                 </label>
-                <input
-                  type="submit"
-                  value={loading ? "Logging in..." : "Login"}
+
+                <button
                   className="buttonbg signinbutton"
                   style={{
                     backgroundColor: "black",
                     cursor: loading ? "not-allowed" : "pointer",
                     opacity: loading ? 0.7 : 1,
                   }}
-                />
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? "Logging in..." : "Login"}
+                </button>
                 <p className="signup">
                   Have not an account yet?
                   <Link to={"/signUp"} className="signuplink">

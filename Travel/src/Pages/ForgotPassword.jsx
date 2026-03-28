@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 function ForgotPassword() {
   const [formData, setFormData] = useState({
@@ -18,25 +19,34 @@ function ForgotPassword() {
   }
 
   console.log(formData);
-  
-  async function handleSubmit(e) {
-    e.preventDefault();
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/api/user/password/forgotpassword",
-        formData
-      );
+  const ForgetPassword = async (formData) => {
+    const res = await axios.post(
+      "http://localhost:8000/api/user/password/forgotpassword",
+      formData,
+    );
+    return Response.data;
+  };
 
+  const mutation = useMutation({
+    mutationFn : ForgetPassword,
+
+    onSuccess: ()=>{
       if (res.data.status) {
         setMessage("Password reset link sent to your email.");
       } else {
         setMessage("Email not found.");
       }
-    } catch (error) {
-      console.log(error);
+    },
+
+    onError:()=>{
       setMessage("Something went wrong. Try again.");
     }
+  })
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    mutation.mutate(formData);
   }
 
   return (
@@ -76,12 +86,9 @@ function ForgotPassword() {
                 />
               </div>
 
-              <input
-                type="submit"
-                value="Send Reset Link"
-                className="buttonbg signinbutton"
-                style={{ backgroundColor: "black", cursor: "pointer" }}
-              />
+              <button className="buttonbg signinbutton" style={{ backgroundColor: "black", cursor: "pointer" }} disabled={mutation.isPending}>
+                {mutation.isPending? "Sending Reset Link" : "Send Reset Link"}
+              </button>
 
               {message && <p style={{ marginTop: "15px" }}>{message}</p>}
 

@@ -3,10 +3,10 @@ import axios from "axios";
 import { useParams, useSearchParams } from "react-router-dom";
 import api from "../utils/AxiosConfig";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function ResetPassword() {
-  const { token } =  useParams();
-
+  const { token } = useParams();
 
   const [formData, setFormData] = useState({
     password: "",
@@ -21,6 +21,30 @@ function ResetPassword() {
     }));
   }
 
+  const ResetPassword = async (formData) => {
+    const response = await api.post("/user/resetpassword/reset-password", {
+      token: token,
+      password: formData.password,
+    });
+    return response.data;
+  };
+
+  const mutation = useMutation({
+    mutationFn: ResetPassword,
+
+    onSuccess: () => {
+      toast.success("Password reset successful", {
+        onClose: () => {
+          window.location.href = "/login";
+        },
+      });
+    },
+
+    onError: () => {
+      toast.error("Reset password failed");
+    },
+  });
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -29,35 +53,19 @@ function ResetPassword() {
       return;
     }
 
-    try {
-      const res = await api.post(
-        "/user/resetpassword/reset-password",
-        {
-          token: token,
-          password: formData.password,
-        }
-      );
-
-      toast.success("Password reset successful", {
-          onClose: () => {
-            window.location.href = "/login";
-          },
-        });
-    } catch (error) {
-      console.log(error);
-      toast.error("Reset password failed");
-    }
+    mutation.mutate(formData);
   }
 
   return (
-    
     <section className="w3l-form-34-main">
-              {/* inner banner */}
+      {/* inner banner */}
       <section className="w3l-inner-banner-main">
         <div className="banner-9 sec-img">
           <div className="wrapper">
             <ul className="breadcrumbs-custom-path">
-              <li className="active" style={{color:"white"}}>Forgot Password</li>
+              <li className="active" style={{ color: "white" }}>
+                Forgot Password
+              </li>
             </ul>
           </div>
         </div>
@@ -101,6 +109,14 @@ function ResetPassword() {
               className="buttonbg signinbutton"
               style={{ backgroundColor: "black", cursor: "pointer" }}
             />
+
+            <button
+              className="buttonbg signinbutton"
+              style={{ backgroundColor: "black", cursor: "pointer" }}
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? "Resetting Password..." : "Reset Password"}
+            </button>
           </form>
         </div>
       </div>

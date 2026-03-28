@@ -3,9 +3,10 @@ import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 function AdminManageHeritage() {
-  const [heritage, setHeritage] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -27,15 +28,22 @@ function AdminManageHeritage() {
   async function fetchHeritage() {
     try {
       const res = await api.get("/heritage/all");
-      setHeritage(res.data.data);
+      return res.data.data || [];
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 
-  useEffect(() => {
-    fetchHeritage();
-  }, []);
+  const {
+    data: heritage = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["heritage"],
+    queryFn: fetchHeritage,
+  });
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -47,7 +55,7 @@ function AdminManageHeritage() {
   }
 
   function handleGalleryChange(e) {
-    setGalleryFiles([...e.target.files]); 
+    setGalleryFiles([...e.target.files]);
   }
 
   function openAddForm() {
@@ -85,11 +93,14 @@ function AdminManageHeritage() {
       status: item.status,
     });
   }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-
+  const saveHeritage = async ({
+    formData,
+    editId,
+    imageFile,
+    galleryFiles,
+  }) => {
     const formData2 = new FormData();
+
     formData2.append("city_id", formData.city_id);
     formData2.append("name", formData.name);
     formData2.append("description", formData.description);
@@ -100,27 +111,50 @@ function AdminManageHeritage() {
     formData2.append("status", formData.status);
     formData2.append("ticket_price", formData.ticket_price);
     formData2.append("video_path", formData.video_path);
-    formData2.append("image_path", imageFile);
+
+    if (imageFile) {
+      formData2.append("image_path", imageFile);
+    }
 
     for (let i = 0; i < galleryFiles.length; i++) {
       formData2.append("gallery_images", galleryFiles[i]);
     }
 
-    try {
     if (editId) {
-      await api.put(`/heritage/update/${editId}`, formData2);
-      toast.success("Updated successfully");
+      const res = await api.put(`/heritage/update/${editId}`, formData2);
+      return res.data;
     } else {
-      await api.post("/heritage/add", formData2);
-      toast.success("Added successfully");
+      const res = await api.post("/heritage/add", formData2);
+      return res.data;
     }
+  };
 
-    setShowForm(false);
-    fetchHeritage();
-    } catch (err) {
-      console.log(err);
-      alert("Error");
-    }
+  const mutation = useMutation({
+    mutationFn: saveHeritage,
+
+    onSuccess: (data, variables) => {
+      if (variables.editId) {
+        toast.success("Updated successfully");
+      } else {
+        toast.success("Added successfully");
+      }
+
+      setShowForm(false);
+    },
+
+    onError: (error) => {
+      console.log(error);
+      toast.error("Something went wrong");
+    },
+  });
+  async function handleSubmit(e) {
+    e.preventDefault();
+    mutation.mutate({
+      formData,
+      editId,
+      imageFile,
+      galleryFiles,
+    });
   }
 
   async function handleDelete(id) {
@@ -142,7 +176,11 @@ function AdminManageHeritage() {
         <div className="admin-body">
           <div className="top-bar">
             <h2>Heritage Management</h2>
-            <button className="add-btn" onClick={openAddForm}>
+            <button
+              className="add-btn"
+              onClick={openAddForm}
+              
+            >
               + Add Heritage
             </button>
           </div>
@@ -157,12 +195,11 @@ function AdminManageHeritage() {
 
               <div className="form-grid">
                 <input
-                type="text"
+                  type="text"
                   name="city_id"
                   placeholder="City ID"
                   value={formData.city_id}
                   onChange={handleChange}
-                  
                 />
                 <input
                   name="name"
@@ -246,7 +283,15 @@ function AdminManageHeritage() {
               </div>
 
               <div className="form-actions">
-                <button type="submit">{editId ? "Update" : "Save"}</button>
+                <button type="submit" disabled={mutation.isPending}>
+                  {mutation.isPending
+                    ? editId
+                      ? "Updating..."
+                      : "Saving..."
+                    : editId
+                      ? "Update"
+                      : "Save"}
+                </button>
                 <button
                   type="button"
                   className="cancel-btn"
@@ -268,33 +313,53 @@ function AdminManageHeritage() {
               </tr>
             </thead>
             <tbody>
-              {heritage.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.name}</td>
-                  <td>{item.city_id}</td>
-                  <td>{item.status}</td>
-                  <td>
-                    <button
-                      className="edit-btn"
-                      onClick={() => handleEdit(item)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Delete
-                    </button>
+              {isLoading ? (
+                <tr>
+                  <td colSpan="4" align="center">
+                    Loading...
                   </td>
                 </tr>
-              ))}
+              ) : isError ? (
+                <tr>
+                  <td colSpan="4" align="center" style={{ color: "red" }}>
+                    ❌ Failed to load heritage data
+                  </td>
+                </tr>
+              ) : heritage.length > 0 ? (
+                heritage.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.name}</td>
+                    <td>{item.city_id}</td>
+                    <td>{item.status}</td>
+                    <td>
+                      <button
+                        className="edit-btn"
+                        onClick={() => handleEdit(item)}
+                        disabled={mutation.isPending}
+                      >
+                        {mutation.isPending ? "Edit.." : "Edit"}
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(item._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" align="center">
+                    No heritage found...
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
     </div>
-  
   );
 }
 

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Logout from "../utils/Logout";
 import api from "../utils/AxiosConfig";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Profile() {
   const [userProfile, setUserProfile] = useState({});
-  const navigate = useNavigate();
 
   async function FetchUserProfile() {
     try {
@@ -22,8 +21,6 @@ function Profile() {
   useEffect(() => {
     FetchUserProfile();
   }, []);
-
-
 
   return (
     <div className="profile-page">

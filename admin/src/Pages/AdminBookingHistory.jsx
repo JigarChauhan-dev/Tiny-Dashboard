@@ -3,23 +3,28 @@ import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 function AdminBookingHistory() {
-  const [bookings, setBookings] = useState([]);
-
-  async function fetchBookings() {
-    try {
-      let res = await api.get("/admin/book");
-      setBookings(res.data.data || []);
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed to load bookings ❌");
-    }
+async function fetchBookings() {
+  try {
+    const res = await api.get("/admin/book");
+    return res.data.data || [];
+  } catch (err) {
+    console.log(err);
+    throw err; 
   }
+}
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
+const {
+  data: bookings = [],
+  isLoading,
+  isError,
+  error,
+} = useQuery({
+  queryKey: ["adminBookings"],
+  queryFn: fetchBookings,
+});
 
   async function handleDelete(id) {
     if (!window.confirm("Delete this booking?")) return;
@@ -82,7 +87,7 @@ function AdminBookingHistory() {
               ) : (
                 <tr>
                   <td colSpan="6" align="center">
-                    No bookings found
+                    Loading...
                   </td>
                 </tr>
               )}

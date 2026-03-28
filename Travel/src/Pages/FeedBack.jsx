@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/AxiosConfig";
 import { LogoutWithoutNotification } from "../utils/Logout";
 import { FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function FeedBack() {
-  // --- 1. INTERACTIVE RATING STATE ---
+  let navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   let [getfeedback, setGetFeedback] = useState([]);
@@ -45,16 +46,21 @@ function FeedBack() {
     }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  const FeedbackSubmit = async (feedback) => {
+    let response = await api.post("/user/feedbacks/submit", feedback);
+    return response.data;
+  };
 
-    try {
-      let response = await api.post("/user/feedbacks/submit", feedback);
+  const mutation = useMutation({
+    mutationFn: FeedbackSubmit,
+
+    onSuccess: () => {
       toast.success("Feedback Submited", {
-          onClose: () => {
-            window.location.href = "/";
-          },
-        });
+        onClose: () => {
+          navigate("/")
+          // window.location.href = "/";
+        },
+      });
       setFeedback({
         username: "",
         email: "",
@@ -65,10 +71,21 @@ function FeedBack() {
       if (response.data.token) {
         Cookies.set("token", response.data.token);
       }
-    } catch (error) {
-      console.log(error);
-      alert("FeedBack Failed");
+    },
+
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!feedback.rating || feedback.rating === 0) {
+      toast.error("Please select a star rating");
+      return;
     }
+
+    mutation.mutate(feedback);
   }
 
   async function FetchUserProfile() {
@@ -205,8 +222,12 @@ function FeedBack() {
                   rows="5"
                 ></textarea>
 
-                <button type="submit" className="submit-feedback-btn mt-3">
-                  Submit Feedback
+                <button
+                  type="submit"
+                  className="submit-feedback-btn mt-3"
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? "Submitting..." : "Submit Feedback"}
                 </button>
               </form>
             </div>

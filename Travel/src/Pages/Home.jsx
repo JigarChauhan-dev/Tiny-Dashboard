@@ -50,17 +50,14 @@ function Home() {
     queryFn: FetchFeedback,
   });
 
-  const {
-  data: profile,
-} = useQuery({
-  queryKey: ["profile"],
-  queryFn: FetchProfile
-});
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: FetchProfile,
+  });
 
   console.log(heritageSites);
   console.log(feedback);
   console.log(profile);
-  
 
   return (
     <div>
@@ -315,7 +312,7 @@ function Home() {
                   <p style={{ textAlign: "center", color: "red" }}>
                     ❌ Failed to load feedback
                   </p>
-                ) : feedback.length > 0 ? (
+                ) : feedback?.[0] ? (
                   feedback.slice(0, 3).map((value) => (
                     <div className="customers-left_sur" key={value._id}>
                       <div

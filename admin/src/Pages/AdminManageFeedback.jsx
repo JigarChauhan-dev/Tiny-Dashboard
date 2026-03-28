@@ -3,28 +3,30 @@ import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 function AdminManageFeedback() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  async function FetchData() {
+  async function fetchFeedbacks() {
     try {
-      setLoading(true);
-      let response = await api.get("/feedbacks/all");
-      setData(response.data.data || []);
-      setLoading(false);
+      const response = await api.get("/feedbacks/all");
+      return response.data.data || []; // ✅ return data
     } catch (error) {
       console.log("Fetch Error:", error);
-      toast.error("Failed to load feedback");
-      setLoading(false);
+      throw error; // ✅ important for React Query
     }
   }
 
-  useEffect(() => {
-    FetchData();
-  }, []);
+  const {
+    data: feedbacks = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["feedbacks"],
+    queryFn: fetchFeedbacks,
+  });
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this feedback?")) return;
@@ -41,7 +43,7 @@ function AdminManageFeedback() {
     }
   };
 
-  const filteredData = data.filter(
+  const filteredData = feedbacks.filter(
     (f) =>
       (f.username || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (f.message || "").toLowerCase().includes(searchTerm.toLowerCase()),
@@ -81,10 +83,16 @@ function AdminManageFeedback() {
             </thead>
 
             <tbody>
-              {loading ? (
+              {isLoading ? (
                 <tr>
                   <td colSpan="5" align="center">
                     Loading...
+                  </td>
+                </tr>
+              ) : isError ? (
+                <tr>
+                  <td colSpan="5" align="center" style={{ color: "red" }}>
+                    Error: {error.message}
                   </td>
                 </tr>
               ) : filteredData.length > 0 ? (

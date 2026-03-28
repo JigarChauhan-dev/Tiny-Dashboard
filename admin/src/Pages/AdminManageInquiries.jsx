@@ -1,29 +1,30 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 function AdminManageInquiries() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  async function FetchData() {
+  async function fetchInquiries() {
     try {
-      setLoading(true);
-      let response = await api.get("/admin/inquiries/all");
-      setData(response.data.data || []);
-      setLoading(false);
+      const response = await api.get("/admin/inquiries/all");
+      return response.data.data || [];
     } catch (error) {
       console.log("Fetch Error:", error);
-      toast.error("Failed to load inquiries");
-      setLoading(false);
+      throw error;
     }
   }
 
-  useEffect(() => {
-    FetchData();
-  }, []);
+  const {
+    data: inquiries = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["inquiries"],
+    queryFn: fetchInquiries,
+  });
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this inquiry?")) return;
@@ -40,7 +41,6 @@ function AdminManageInquiries() {
     }
   };
 
-
   return (
     <div className="wrapper">
       <Aside />
@@ -49,7 +49,6 @@ function AdminManageInquiries() {
         <Header />
 
         <div className="admin-body">
-
           {/* HEADER */}
           <div className="page-header">
             <h2>Manage Inquiries</h2>
@@ -69,20 +68,26 @@ function AdminManageInquiries() {
             </thead>
 
             <tbody>
-              {loading ? (
+              {isLoading ? (
                 <tr>
                   <td colSpan="6" align="center">
-                    ⏳ Loading inquiries...
+                    Loading...
                   </td>
                 </tr>
-              ) : data.length > 0 ? (
-                data.map((item) => (
+              ) : isError ? (
+                <tr>
+                  <td colSpan="6" align="center" style={{ color: "red" }}>
+                    ❌ Failed to load inquiries
+                  </td>
+                </tr>
+              ) : inquiries.length > 0 ? (
+                inquiries.map((item) => (
                   <tr key={item._id}>
                     <td>{item.name}</td>
                     <td>{item.email}</td>
                     <td>{item.subject}</td>
                     <td>{item.message}</td>
-                    <td>{item.created_at.split("T")[0]}</td>
+                    <td>{item.created_at?.split("T")[0]}</td>
                     <td>
                       <button
                         className="btn-action btn-delete"
@@ -104,7 +109,6 @@ function AdminManageInquiries() {
           </table>
         </div>
       </div>
-
     </div>
   );
 }

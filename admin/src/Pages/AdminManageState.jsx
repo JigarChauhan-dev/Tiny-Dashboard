@@ -3,9 +3,10 @@ import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 function AdminManageState() {
-  const [states, setStates] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -14,15 +15,24 @@ function AdminManageState() {
     status: "ACTIVE",
   });
 
-  // Fetch all states
-  const fetchStates = async () => {
-    const res = await api.get("/states/all");
-    setStates(res.data.data || []);
-  };
+  async function fetchStates() {
+    try {
+      const res = await api.get("/states/all");
+      return res.data.data || [];
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
 
-  useEffect(() => {
-    fetchStates();
-  }, []);
+  const {
+    data: states = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["states"],
+    queryFn: fetchStates,
+  });
 
   const openAddForm = () => {
     setFormData({ _id: null, state_name: "", status: "ACTIVE" });
@@ -38,32 +48,53 @@ function AdminManageState() {
     setShowForm(true);
   };
 
-  const handleSubmit = async (e) => {
+  const saveState = async (formData) => {
+    if (formData._id) {
+      // UPDATE
+      const res = await api.put(`/states/edit/${formData._id}`, {
+        state_name: formData.state_name,
+        status: formData.status,
+      });
+      return res.data;
+    } else {
+      // ADD
+      const res = await api.post("/states/add", {
+        state_name: formData.state_name,
+        status: formData.status,
+      });
+      return res.data;
+    }
+  };
+
+  const mutation = useMutation({
+    mutationFn: saveState,
+
+    onSuccess: (data, variables) => {
+
+      if (variables._id) {
+        toast.success("State updated successfully");
+      } else {
+        toast.success("State added successfully");
+      }
+
+      fetchStates();
+      setShowForm(false);
+    },
+
+    onError: (error) => {
+      console.log(error);
+      toast.error("Something went wrong");
+    },
+  });
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!formData.state_name) {
       return toast.error("State name required");
     }
 
-    if (formData._id) {
-      // UPDATE
-      await api.put(`/states/edit/${formData._id}`, {
-        state_name: formData.state_name,
-        status: formData.status,
-      });
-
-      toast.success("State updated successfully");
-    } else {
-      // ADD
-      await api.post("/states/add", {
-        state_name: formData.state_name,
-        status: formData.status,
-      });
-      toast.success("State added successfully");
-    }
-
-    fetchStates();
-    setShowForm(false);
+    mutation.mutate(formData);
   };
 
   const handleDelete = async (id) => {
@@ -133,26 +164,46 @@ function AdminManageState() {
               </tr>
             </thead>
             <tbody>
-              {states.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.state_name}</td>
-                  <td>{item.status}</td>
-                  <td>
-                    <button
-                      className="edit-btn"
-                      onClick={() => openEditForm(item)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Delete
-                    </button>
+              {isLoading ? (
+                <tr>
+                  <td colSpan="3" align="center">
+                    Loading...
                   </td>
                 </tr>
-              ))}
+              ) : isError ? (
+                <tr>
+                  <td colSpan="3" align="center" style={{ color: "red" }}>
+                    Failed to load data
+                  </td>
+                </tr>
+              ) : states.length > 0 ? (
+                states.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.state_name}</td>
+                    <td>{item.status}</td>
+                    <td>
+                      <button
+                        className="edit-btn"
+                        onClick={() => openEditForm(item)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(item._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" align="center">
+                    No states found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

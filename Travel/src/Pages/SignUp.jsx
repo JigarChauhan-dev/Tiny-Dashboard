@@ -4,8 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function SignUp() {
+  let navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
@@ -79,36 +81,38 @@ function SignUp() {
     return isvalid;
   }
 
-  async function handelSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    if (!validateForm()) return;
-    console.log("Form Submitted.");
+  const Signup = async (user) => {
+    let response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/auth/signup`,
+      user,
+    );
+    return response.data;
+  };
 
-    try {
-      let response = await axios.post(
-        "https://backend-twxo.onrender.com/api/auth/signup",
-        user,
-      );
+  const mutation = useMutation({
+    mutationFn: Signup,
 
-      console.log(user);
-
-      console.log(response);
-      console.log(response.data.message);
-
-      if (response.status == 200 || response.status == 201) {
+    onSuccess: (data) => {
+      if (data.status) {
+        
         toast.success("Signup Successful", {
           onClose: () => {
-            window.location.href = "/login";
+            navigate("/login")
+            // window.location.href = "/login";
           },
         });
       }
-    } catch (error) {
-      console.error(error);
+    },
+
+    onError: () => {
       toast.error("Signup Failed");
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  async function handelSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    mutation.mutate(user);
   }
 
   return (
@@ -209,16 +213,17 @@ function SignUp() {
                   )}
                 </div>
 
-                <input
-                  type="submit"
+                <button
                   className="buttonbg signinbutton"
-                  value={loading ? "Signing up..." : "Sign Up"}
                   style={{
                     backgroundColor: "black",
                     cursor: loading ? "not-allowed" : "pointer",
                     opacity: loading ? 0.7 : 1,
                   }}
-                />
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? "Signing up..." : "Sign Up"}
+                </button>
 
                 <p className="signup">
                   Already have an account?

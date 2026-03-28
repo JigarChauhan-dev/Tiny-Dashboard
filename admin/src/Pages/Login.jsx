@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function Login() {
-  const [loading, setLoading] = useState(false);
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
     email: "",
@@ -21,16 +21,21 @@ function Login() {
     }));
   }
 
-  async function handelSubmit(e) {
-    e.preventDefault();
-    setLoading(true); 
+  const Login = async (user) => {
+    let response = await axios.post(
+      "https://backend-twxo.onrender.com/api/auth/login",
+      user,
+    );
+    return response.data;
+  };
 
-    try {
-      let response = await axios.post(
-        "https://backend-twxo.onrender.com/api/auth/login",
-        user,
-      );
-      let token = response.data.token;
+  const mutation = useMutation({
+    mutationFn: Login,
+
+    onSuccess: (data) => {
+      console.log("Login success:", data);
+
+      let token = data.token;
 
       if (token) {
         cookie.set("token", token, { expires: 1 });
@@ -40,23 +45,33 @@ function Login() {
           password: "",
         });
 
-        toast.success("Login Successful",{onClose:()=>{
-          window.location.href = "/adminmanageheritage"
-        }})
+        toast.success("Login Successful", {
+          onClose: () => {
+            window.location.href = "/adminmanageheritage";
+          },
+        });
       }
-    } catch (error) {
+    },
+
+    onError: () => {
       setUser({
         email: "",
         password: "",
       });
-      toast.error("Invalid Details",{onClose:()=>{
-        window.location.href = "/login";
-      }})
-    }   finally {
-    setLoading(false); 
+      toast.error("Invalid Details", {
+        onClose: () => {
+          window.location.href = "/login";
+        },
+      });
+    },
+  });
+
+  async function handelSubmit(e) {
+    e.preventDefault();
+
+    mutation.mutate(user);
   }
-}
-  
+
   console.log(user);
 
   return (
@@ -141,9 +156,9 @@ function Login() {
             <button
               className="btn btn-lg btn-primary btn-block"
               type="submit"
-              disabled={loading}
+              disabled={mutation.isPending}
             >
-              {loading ? "Logging in..." : "Let me in"}
+              {mutation.isPending ? "Logging in..." : "Let me in"}
             </button>
             <p className="mt-5 mb-3 text-muted">© 2026</p>
           </form>

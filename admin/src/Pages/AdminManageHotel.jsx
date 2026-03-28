@@ -1,11 +1,12 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 function AdminManageHotel() {
-  const [hotels, setHotels] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -24,21 +25,27 @@ function AdminManageHotel() {
 
   async function fetchHotels() {
     try {
-      let res = await api.get("/hotels/all");
-      setHotels(res.data.data || []);
+      const res = await api.get("/hotels/all");
+      return res.data.data || [];
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 
-  useEffect(() => {
-    fetchHotels();
-  }, []);
+  const {
+    data: hotels = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["hotels"],
+    queryFn: fetchHotels,
+  });
 
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
   }
   console.log(formData);
 
@@ -79,10 +86,9 @@ function AdminManageHotel() {
     });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-
+  const saveHotel = async ({ formData, editId, imageFile }) => {
     const formData2 = new FormData();
+
     formData2.append("city_id", formData.city_id);
     formData2.append("hotel_name", formData.hotel_name);
     formData2.append("address", formData.address);
@@ -91,31 +97,56 @@ function AdminManageHotel() {
     formData2.append("long", formData.long);
     formData2.append("price_range", formData.price_range);
     formData2.append("status", formData.status);
-    formData2.append("image_path", imageFile);
-    
 
-    // try {
-    if (editId) {
-      await api.put(`/hotels/update/${editId}`, formData2);
-      toast.success("Hotel Updated Successfully");
-    } else {
-      await api.post("/hotels/add", formData2);
-      toast.success("Hotel Added Successfully");
+    if (imageFile) {
+      formData2.append("image_path", imageFile);
     }
 
-    setShowForm(false);
-    fetchHotels();
-    // } catch (err) {
-    //   console.log(err);
-    //   alert("Operation Failed");
-    // }
+    if (editId) {
+      const res = await api.put(`/hotels/update/${editId}`, formData2);
+      return res.data;
+    } else {
+      const res = await api.post("/hotels/add", formData2);
+      return res.data;
+    }
+  };
+
+  const mutation = useMutation({
+    mutationFn: saveHotel,
+
+    onSuccess: (data, variables) => {
+      if (variables.editId) {
+        toast.success("Hotel Updated Successfully");
+      } else {
+        toast.success("Hotel Added Successfully");
+      }
+
+      fetchHotels();
+
+      setShowForm(false);
+    },
+
+    onError: (error) => {
+      console.log(error);
+      toast.error("Something went wrong");
+    },
+  });
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    mutation.mutate({
+      formData,
+      editId,
+      imageFile,
+    });
   }
 
   async function handleDelete(id) {
     if (!window.confirm("Delete this hotel?")) return;
     try {
       await api.delete(`/hotels/remove/${id}`);
-      fetchHotels();
+      fetchHotels;
     } catch (err) {
       console.log(err);
     }
@@ -133,7 +164,7 @@ function AdminManageHotel() {
               {/* HEADER (same as Heritage) */}
               <div className="page-header">
                 <h2>Hotel Management</h2>
-                <button className="btn btn-primary" onClick={openAddForm}>
+                <button className="add-btn" onClick={openAddForm}>
                   + Add Hotel
                 </button>
               </div>
@@ -151,7 +182,19 @@ function AdminManageHotel() {
                 </thead>
 
                 <tbody>
-                  {hotels.length > 0 ? (
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="5" align="center">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : isError ? (
+                    <tr>
+                      <td colSpan="5" align="center">
+                        Error loading hotels
+                      </td>
+                    </tr>
+                  ) : hotels.length > 0 ? (
                     hotels.map((item) => (
                       <tr key={item._id}>
                         <td>{item.hotel_name}</td>
@@ -160,13 +203,13 @@ function AdminManageHotel() {
                         <td>{item.status}</td>
                         <td>
                           <button
-                            className="btn-action btn-reply"
+                            className="edit-btn"
                             onClick={() => handleEdit(item)}
                           >
                             Edit
                           </button>
                           <button
-                            className="btn-action btn-delete"
+                            className="delete-btn"
                             onClick={() => handleDelete(item._id)}
                           >
                             Delete
@@ -195,8 +238,18 @@ function AdminManageHotel() {
                   Back
                 </button>
 
-                <button className="btn btn-primary" onClick={handleSubmit}>
-                  {editId ? "Update Hotel" : "Save Hotel"}
+                <button
+                  className="btn btn-primary"
+                  onClick={handleSubmit}
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending
+                    ? editId
+                      ? "Updating..."
+                      : "Saving..."
+                    : editId
+                      ? "Update Hotel"
+                      : "Save Hotel"}
                 </button>
               </div>
 
@@ -213,7 +266,7 @@ function AdminManageHotel() {
                   value={formData.hotel_name}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <input
@@ -223,7 +276,7 @@ function AdminManageHotel() {
                   value={formData.city_id || ""}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <input
@@ -233,7 +286,7 @@ function AdminManageHotel() {
                   value={formData.contact_number}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <textarea
@@ -242,7 +295,7 @@ function AdminManageHotel() {
                   value={formData.address}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <input
@@ -252,7 +305,7 @@ function AdminManageHotel() {
                   value={formData.price_range}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <input
@@ -262,7 +315,7 @@ function AdminManageHotel() {
                   value={formData.lat}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <input
@@ -272,7 +325,7 @@ function AdminManageHotel() {
                   value={formData.long}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 />
 
                 <input
@@ -282,7 +335,7 @@ function AdminManageHotel() {
                   accept="image/*"
                   onChange={handleImageChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                   required={!editId}
                 />
 
@@ -291,7 +344,7 @@ function AdminManageHotel() {
                   value={formData.status}
                   onChange={handleChange}
                   className="form-control"
-                  style={{marginBottom:"10px"}}
+                  style={{ marginBottom: "10px" }}
                 >
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="INACTIVE">INACTIVE</option>

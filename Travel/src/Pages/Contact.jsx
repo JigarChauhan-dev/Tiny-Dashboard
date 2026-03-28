@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/AxiosConfig";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function Contact() {
+  let navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,27 +23,33 @@ function Contact() {
 
   console.log(formData);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const InquirieSubmit = async (formData) => {
+    let response = await api.post("/user/inquiries/submit", formData);
+    return response.data;
+  };
 
-    try {
-      let res = await api.post("/user/inquiries/submit", formData);
+  const mutation = useMutation({
+    mutationFn: InquirieSubmit,
 
+    onSuccess: () => {
+      toast.success("Message Sent Successfully", {
+        onClose: () => (navigate("/")),
+      });
       setFormData({
         name: "",
         email: "",
         subject: "",
         message: "",
       });
-      toast.success("Message Sent Successfully", {
-        onClose: () => {
-          window.location.href = "/";
-        },
-      });
-    } catch (error) {
-      console.log(error);
+    },
+    onError: () => {
       toast.error("Something went wrong");
-    }
+    },
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    mutation.mutate(formData);
   };
 
   return (
@@ -117,7 +125,7 @@ function Contact() {
                 ></textarea>
 
                 <button type="submit" className="submit-btn-red">
-                  Send Now
+                  {mutation.isPending ? "Sending..." : "Send"}
                 </button>
               </div>
             </form>

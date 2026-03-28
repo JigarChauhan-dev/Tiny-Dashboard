@@ -1,27 +1,33 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../utils/AxiosConfig";
 import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 function AdminManageUsers() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list");
   const [search, setSearch] = useState("");
 
-
   // ===== FETCH USERS =====
-  const fetchUsers = async () => {
-    setLoading(true);
-    const res = await api.get("/admin/manage-users/all");
-    setUsers(res.data.data || []);
-    setLoading(false);
-  };
+  async function fetchUsers() {
+    try {
+      const res = await api.get("/admin/manage-users/all");
+      return res.data.data || [];
+    } catch (err) {
+      console.log("Fetch Users Error:", err);
+      throw err; 
+    }
+  }
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const {
+    data: users = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+  });
 
   // ===== DELETE USER =====
   const deleteUser = async (id) => {
@@ -38,7 +44,6 @@ function AdminManageUsers() {
       <div className="main-content admin-main-content">
         <Header />
         <div className="admin-body fade-in">
-
           {/* ================= LIST ================= */}
           {view === "list" && (
             <>
@@ -52,7 +57,7 @@ function AdminManageUsers() {
                 className="search-input"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={{marginBottom:"20px"}}
+                style={{ marginBottom: "20px" }}
               />
 
               <table className="admin-table">
@@ -66,33 +71,45 @@ function AdminManageUsers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="5">Loading...</td>
-                    </tr>
-                  ) : (
-                    users
-                      .filter((u) =>
-                        (u.username || "")
-                          .toLowerCase()
-                          .includes(search.toLowerCase())
-                      )
-                      .map((u) => (
-                        <tr key={u._id}>
-                          <td>{u.username}</td>
-                          <td>{u.email}</td>
-                          <td>{u.role}</td>
-                          <td>{u.phone || "N/A"}</td>
-                          <td>
-
-                            <button className="delete-btn" onClick={() => deleteUser(u._id)}>
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                  )}
-                </tbody>
+  {isLoading ? (
+    <tr>
+      <td colSpan="5" className="text-center">Loading...</td>
+    </tr>
+  ) : isError ? (
+    <tr>
+      <td colSpan="5" style={{ color: "red" }}>
+        ❌ Failed to load users
+      </td>
+    </tr>
+  ) : users.length > 0 ? (
+    users
+      .filter((u) =>
+        (u.username || "")
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      )
+      .map((u) => (
+        <tr key={u._id}>
+          <td>{u.username}</td>
+          <td>{u.email}</td>
+          <td>{u.role}</td>
+          <td>{u.phone || "N/A"}</td>
+          <td>
+            <button
+              className="delete-btn"
+              onClick={() => deleteUser(u._id)}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))
+  ) : (
+    <tr>
+      <td colSpan="5">No users found</td>
+    </tr>
+  )}
+</tbody>
               </table>
             </>
           )}

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../utils/AxiosConfig";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 function EditProfile() {
+  let navigate = useNavigate();
   let profile = useLocation().state;
   let [formData, setFormData] = useState(profile);
   let id = formData._id;
@@ -18,30 +20,38 @@ function EditProfile() {
     }));
   }
 
+  const EditProfile = async (formData) => {
+    const response = await api.put(`/user/profile/update/${id}`, formData);
+    return response.data;
+  };
+
+  const mutation = useMutation({
+    mutationFn: EditProfile,
+
+    onSuccess: () => {
+      toast.success("Profile Updated Successfully..", {
+        onClose: () => {
+          navigate("/profile")
+          // window.location.href = "/profile";
+        },
+      });
+    },
+
+    onError: () => {
+      toast.error("Update Failed");
+    },
+  });
+
   async function handelSubmit(e) {
     e.preventDefault();
 
-    try {
-      const response = await api.put(`/user/profile/update/${id}`, formData);
-
-      if(response.data.status){
-        toast.success("Profile Updated Successfully..", {
-          onClose: () => {
-            window.location.href = "/profile";
-          },
-        });
-      }
-
-    } catch (error) {
-      console.log(error);
-      toast.error("Update Failed");
-    }
+    mutation.mutate(formData);
   }
 
   const user = {
-    name : formData.username,
-    email : formData.email,
-  }
+    name: formData.username,
+    email: formData.email,
+  };
 
   return (
     <div className="profile-page">
@@ -85,8 +95,8 @@ function EditProfile() {
 
                 {/* Buttons */}
                 <div className="action-footer">
-                  <button type="submit" className="btn-primary-slate">
-                    Save Changes
+                  <button type="submit" className="btn-primary-slate" disabled={mutation.isPending}>
+                    {mutation.isPending ? "Save Changes..." : "Save Changes"}
                   </button>
 
                   <Link to="/profile" className="btn-outline-slate">
