@@ -35,9 +35,9 @@ function Login() {
   const mutation = useMutation({
     mutationFn: Login,
 
-    onSuccess: (response) => {
-      if (response.token) {
-        Cookies.set("token", response.token);
+    onSuccess: (data) => {
+      if (data?.token) {
+        Cookies.set("token", data.token);
 
         toast.success("Login Successful", {
           onClose: () => {
@@ -45,18 +45,33 @@ function Login() {
           },
         });
       }
+
       setUser({
         email: "",
         password: "",
       });
+
+      setLoading(false);
     },
-    onError: () => {
-      toast.error("Login Failed");
+
+    onError: (error) => {
+      console.log("ERROR:", error?.response?.data);
+
+      toast.error(
+        error?.response?.data?.message || "Invalid email or password",
+      );
+
+      setLoading(false);
     },
   });
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
+
+    if (!user.email || !user.password) {
+      return toast.error("Email and Password required");
+    }
+
     setLoading(true);
 
     mutation.mutate(user);
