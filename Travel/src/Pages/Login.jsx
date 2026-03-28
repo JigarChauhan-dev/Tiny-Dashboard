@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 
 function Login() {
-  let navigate = useNavigate();
   let [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +41,8 @@ function Login() {
 
         toast.success("Login Successful", {
           onClose: () => {
-            navigate("/")
+            
+            window.location.href = "/";
           },
         });
       }
@@ -86,6 +86,7 @@ function Login() {
           <div className="banner-9 sec-img">
             <div className="wrapper">
               <ul className="breadcrumbs-custom-path">
+                
                 <li className="active">Login</li>
               </ul>
             </div>
