@@ -49,7 +49,6 @@ function Login() {
         toast.success("Login Successful", {
           onClose: () => {
             navigate("/adminmanageheritage")
-            // window.location.href = "/adminmanageheritage";
           },
         });
       }
@@ -62,7 +61,7 @@ function Login() {
       });
       toast.error("Invalid Details", {
         onClose: () => {
-          window.location.href = "/login";
+          navigate("/login")
         },
       });
     },
