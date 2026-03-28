@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 
 function Login() {
+  let navigate = useNavigate();
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
     email: "",
@@ -47,7 +48,8 @@ function Login() {
 
         toast.success("Login Successful", {
           onClose: () => {
-            window.location.href = "/adminmanageheritage";
+            navigate("/adminmanageheritage")
+            // window.location.href = "/adminmanageheritage";
           },
         });
       }
