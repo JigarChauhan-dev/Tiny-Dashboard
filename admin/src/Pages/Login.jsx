@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 
 function Login() {
-  let navigate = useNavigate();
   let [showPassword, setShowPassword] = useState(false);
   let [user, setUser] = useState({
     email: "",
@@ -61,7 +60,8 @@ function Login() {
       });
       toast.error("Invalid Details", {
         onClose: () => {
-          navigate("/login")
+          
+          window.location.href = "/login";
         },
       });
     },
