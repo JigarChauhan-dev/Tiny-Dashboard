@@ -5,8 +5,10 @@ import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageHeritage() {
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -139,6 +141,7 @@ function AdminManageHeritage() {
         toast.success("Added successfully");
       }
 
+      queryClient.invalidateQueries({ queryKey: ["heritage"] });
       setShowForm(false);
     },
 
@@ -161,7 +164,7 @@ function AdminManageHeritage() {
     if (!window.confirm("Delete this heritage?")) return;
     try {
       await api.delete(`/heritage/remove/${id}`);
-      fetchHeritage();
+      queryClient.invalidateQueries({ queryKey: ["heritage"] });
     } catch (err) {
       console.log(err);
     }
@@ -176,11 +179,7 @@ function AdminManageHeritage() {
         <div className="admin-body">
           <div className="top-bar">
             <h2>Heritage Management</h2>
-            <button
-              className="add-btn"
-              onClick={openAddForm}
-              
-            >
+            <button className="add-btn" onClick={openAddForm}>
               + Add Heritage
             </button>
           </div>
@@ -342,8 +341,9 @@ function AdminManageHeritage() {
                       <button
                         className="delete-btn"
                         onClick={() => handleDelete(item._id)}
+                        disabled={deleteMutation.isPending}
                       >
-                        Delete
+                        {deleteMutation.isPending ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>

@@ -5,8 +5,10 @@ import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageHotel() {
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -121,8 +123,7 @@ function AdminManageHotel() {
         toast.success("Hotel Added Successfully");
       }
 
-      fetchHotels();
-
+      queryClient.invalidateQueries({ queryKey: ["hotels"] });
       setShowForm(false);
     },
 
@@ -143,10 +144,9 @@ function AdminManageHotel() {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm("Delete this hotel?")) return;
     try {
       await api.delete(`/hotels/remove/${id}`);
-      fetchHotels;
+      queryClient.invalidateQueries({ queryKey: ["hotels"] });
     } catch (err) {
       console.log(err);
     }
@@ -211,8 +211,11 @@ function AdminManageHotel() {
                           <button
                             className="delete-btn"
                             onClick={() => handleDelete(item._id)}
+                            disabled={deleteMutation.isPending}
                           >
-                            Delete
+                            {deleteMutation.isPending
+                              ? "Deleting..."
+                              : "Delete"}
                           </button>
                         </td>
                       </tr>

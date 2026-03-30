@@ -4,18 +4,20 @@ import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageBooking() {
+  const queryClient = useQueryClient();
   const [editId, setEditId] = useState(null);
 
   async function fetchBookings() {
     try {
       const res = await api.get("/admin/book");
       console.log(res.data);
-      return res.data.data || []; // ✅ return instead of setState
+      return res.data.data || [];
     } catch (err) {
       console.log(err);
-      throw err; // ✅ important
+      throw err;
     }
   }
 
@@ -26,10 +28,8 @@ function AdminManageBooking() {
     error,
   } = useQuery({
     queryKey: ["adminBookings"],
-    queryFn: fetchBookings,       
+    queryFn: fetchBookings,
   });
-
-  
 
   const updateStatus = async (id, status) => {
     try {
@@ -38,7 +38,7 @@ function AdminManageBooking() {
       });
 
       toast.success("Status updated successfully");
-      fetchBookings();
+      queryClient.invalidateQueries({ queryKey: ["adminBookings"] });
     } catch (error) {
       console.log(error);
       toast.success("Failed to update status");
@@ -46,10 +46,9 @@ function AdminManageBooking() {
   };
 
   async function handleDelete(id) {
-    if (!window.confirm("Delete this booking?")) return;
     try {
       await api.delete(`/user/book/remove/${id}`);
-      fetchBookings();
+      queryClient.invalidateQueries({ queryKey: ["adminBookings"] });
     } catch (err) {
       console.log(err);
     }
@@ -104,10 +103,11 @@ function AdminManageBooking() {
                       </td>
                       <td>
                         <button
-                          className="btn-action btn-delete"
+                          className="delete-btn"
                           onClick={() => handleDelete(item._id)}
+                          disabled={deleteMutation.isPending}
                         >
-                          Delete
+                          {deleteMutation.isPending ? "Deleting..." : "Delete"}
                         </button>
                       </td>
                     </tr>

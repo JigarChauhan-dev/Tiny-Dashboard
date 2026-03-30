@@ -4,8 +4,10 @@ import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageLocation() {
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -102,7 +104,7 @@ function AdminManageLocation() {
         toast.success("City added successfully");
       }
 
-      fetchCities();
+      queryClient.invalidateQueries({ queryKey: ["cities"] });
 
       setShowForm(false);
     },
@@ -124,10 +126,8 @@ function AdminManageLocation() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this city?")) {
-      await api.delete(`/cities/remove/${id}`);
-      fetchCities();
-    }
+    await api.delete(`/cities/remove/${id}`);
+    queryClient.invalidateQueries({ queryKey: ["cities"] });
   };
 
   return (
@@ -244,8 +244,9 @@ function AdminManageLocation() {
                       <button
                         className="delete-btn"
                         onClick={() => handleDelete(item._id)}
+                        disabled={deleteMutation.isPending}
                       >
-                        Delete
+                        {deleteMutation.isPending ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>

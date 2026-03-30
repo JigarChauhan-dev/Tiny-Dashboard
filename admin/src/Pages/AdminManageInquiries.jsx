@@ -4,8 +4,10 @@ import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageInquiries() {
+  const queryClient = useQueryClient();
   async function fetchInquiries() {
     try {
       const response = await api.get("/admin/inquiries/all");
@@ -27,13 +29,13 @@ function AdminManageInquiries() {
   });
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this inquiry?")) return;
-
     try {
       const response = await api.delete(`/admin/inquiries/remove/${id}`);
+
       if (response.data.status) {
-        setData((prev) => prev.filter((item) => item._id !== id));
         toast.success("Inquiry deleted successfully");
+
+        queryClient.invalidateQueries({ queryKey: ["inquiries"] });
       }
     } catch (err) {
       console.log(err);
@@ -90,10 +92,11 @@ function AdminManageInquiries() {
                     <td>{item.created_at?.split("T")[0]}</td>
                     <td>
                       <button
-                        className="btn-action btn-delete"
+                        className="delete-btn"
                         onClick={() => handleDelete(item._id)}
+                        disabled={deletingId === item._id}
                       >
-                        Delete
+                        {deletingId === item._id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>

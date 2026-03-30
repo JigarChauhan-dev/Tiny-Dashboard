@@ -4,8 +4,10 @@ import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageUsers() {
+  const queryClient = useQueryClient();
   const [view, setView] = useState("list");
   const [search, setSearch] = useState("");
 
@@ -16,7 +18,7 @@ function AdminManageUsers() {
       return res.data.data || [];
     } catch (err) {
       console.log("Fetch Users Error:", err);
-      throw err; 
+      throw err;
     }
   }
 
@@ -29,12 +31,16 @@ function AdminManageUsers() {
     queryFn: fetchUsers,
   });
 
-  // ===== DELETE USER =====
-  const deleteUser = async (id) => {
-    if (window.confirm("Delete user?")) {
+  const handleDelete = async (id) => {
+    try {
       await api.delete(`/admin/manage-users/remove/${id}`);
+
       toast.success("User deleted successfully");
-      setUsers(users.filter((u) => u._id !== id));
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete user");
     }
   };
 
@@ -71,45 +77,50 @@ function AdminManageUsers() {
                   </tr>
                 </thead>
                 <tbody>
-  {isLoading ? (
-    <tr>
-      <td colSpan="5" className="text-center">Loading...</td>
-    </tr>
-  ) : isError ? (
-    <tr>
-      <td colSpan="5" style={{ color: "red" }}>
-        ❌ Failed to load users
-      </td>
-    </tr>
-  ) : users.length > 0 ? (
-    users
-      .filter((u) =>
-        (u.username || "")
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      )
-      .map((u) => (
-        <tr key={u._id}>
-          <td>{u.username}</td>
-          <td>{u.email}</td>
-          <td>{u.role}</td>
-          <td>{u.phone || "N/A"}</td>
-          <td>
-            <button
-              className="delete-btn"
-              onClick={() => deleteUser(u._id)}
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))
-  ) : (
-    <tr>
-      <td colSpan="5">No users found</td>
-    </tr>
-  )}
-</tbody>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : isError ? (
+                    <tr>
+                      <td colSpan="5" style={{ color: "red" }}>
+                        ❌ Failed to load users
+                      </td>
+                    </tr>
+                  ) : users.length > 0 ? (
+                    users
+                      .filter((u) =>
+                        (u.username || "")
+                          .toLowerCase()
+                          .includes(search.toLowerCase()),
+                      )
+                      .map((u) => (
+                        <tr key={u._id}>
+                          <td>{u.username}</td>
+                          <td>{u.email}</td>
+                          <td>{u.role}</td>
+                          <td>{u.phone || "N/A"}</td>
+                          <td>
+                            <button
+                              className="delete-btn"
+                              onClick={() => handleDelete(item._id)}
+                              disabled={deletingId === item._id}
+                            >
+                              {deletingId === item._id
+                                ? "Deleting..."
+                                : "Delete"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5">No users found</td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </>
           )}

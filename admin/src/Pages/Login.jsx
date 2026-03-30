@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import cookie from "js-cookie";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -47,7 +47,7 @@ function Login() {
 
         toast.success("Login Successful", {
           onClose: () => {
-            navigate("/adminmanageheritage")
+            window.location.href = "/adminmanageheritage"
           },
         });
       }

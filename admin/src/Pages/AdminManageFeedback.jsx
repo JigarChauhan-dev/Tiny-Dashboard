@@ -4,17 +4,19 @@ import Aside from "../Common/Aside";
 import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageFeedback() {
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
 
   async function fetchFeedbacks() {
     try {
       const response = await api.get("/feedbacks/all");
-      return response.data.data || []; // ✅ return data
+      return response.data.data || [];
     } catch (error) {
       console.log("Fetch Error:", error);
-      throw error; // ✅ important for React Query
+      throw error;
     }
   }
 
@@ -29,20 +31,19 @@ function AdminManageFeedback() {
   });
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this feedback?")) return;
-
     try {
       const response = await api.delete(`/feedbacks/remove/${id}`);
+
       if (response.data.status) {
-        setData((prev) => prev.filter((f) => f._id !== id));
         toast.success("Feedback deleted successfully");
+
+        queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
       }
     } catch (err) {
       console.log(err);
       toast.error("Error deleting feedback");
     }
   };
-
   const filteredData = feedbacks.filter(
     (f) =>
       (f.username || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -111,10 +112,11 @@ function AdminManageFeedback() {
                     <td>{f.message}</td>
                     <td>
                       <button
-                        className="btn-action btn-delete"
-                        onClick={() => handleDelete(f._id)}
+                        className="delete-btn"
+                        onClick={() => handleDelete(item._id)}
+                        disabled={deletingId === item._id}
                       >
-                        Delete
+                        {deletingId === item._id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>

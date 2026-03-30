@@ -5,8 +5,10 @@ import Header from "../Common/Header";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AdminManageState() {
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -70,14 +72,13 @@ function AdminManageState() {
     mutationFn: saveState,
 
     onSuccess: (data, variables) => {
-
       if (variables._id) {
         toast.success("State updated successfully");
       } else {
         toast.success("State added successfully");
       }
 
-      fetchStates();
+      queryClient.invalidateQueries({ queryKey: ["states"] });
       setShowForm(false);
     },
 
@@ -98,10 +99,8 @@ function AdminManageState() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this state?")) {
-      await api.delete(`/states/remove/${id}`);
-      fetchStates();
-    }
+    await api.delete(`/states/remove/${id}`);
+    queryClient.invalidateQueries({ queryKey: ["states"] });
   };
 
   return (
@@ -143,7 +142,15 @@ function AdminManageState() {
               </div>
 
               <div className="form-actions">
-                <button type="submit">Save</button>
+                <button type="submit" disabled={mutation.isPending}>
+                  {mutation.isPending
+                    ? formData._id
+                      ? "Updating..."
+                      : "Saving..."
+                    : formData._id
+                      ? "Update"
+                      : "Save"}
+                </button>
                 <button
                   type="button"
                   className="cancel-btn"
@@ -191,8 +198,9 @@ function AdminManageState() {
                       <button
                         className="delete-btn"
                         onClick={() => handleDelete(item._id)}
+                        disabled={deleteMutation.isPending}
                       >
-                        Delete
+                        {deleteMutation.isPending ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>
