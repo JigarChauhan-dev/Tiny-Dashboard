@@ -161,7 +161,7 @@ function AdminManageHeritage() {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm("Delete this heritage?")) return;
+    
     try {
       await api.delete(`/heritage/remove/${id}`);
       queryClient.invalidateQueries({ queryKey: ["heritage"] });
@@ -340,10 +340,12 @@ function AdminManageHeritage() {
                       </button>
                       <button
                         className="delete-btn"
-                        onClick={() => handleDelete(item._id)}
-                        disabled={deleteMutation.isPending}
+                        onClick={(e) => {
+                          e.target.innerText = "Deleting..";
+                          handleDelete(item._id);
+                        }}
                       >
-                        {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                        Delete
                       </button>
                     </td>
                   </tr>

@@ -93,10 +93,12 @@ function AdminManageInquiries() {
                     <td>
                       <button
                         className="delete-btn"
-                        onClick={() => handleDelete(item._id)}
-                        disabled={deletingId === item._id}
+                        onClick={(e) => {
+                          e.target.innerText = "Deleting..";
+                          handleDelete(item._id);
+                        }}
                       >
-                        {deletingId === item._id ? "Deleting..." : "Delete"}
+                        Delete
                       </button>
                     </td>
                   </tr>

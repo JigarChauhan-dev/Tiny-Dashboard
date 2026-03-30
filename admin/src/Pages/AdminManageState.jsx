@@ -197,10 +197,12 @@ function AdminManageState() {
                       </button>
                       <button
                         className="delete-btn"
-                        onClick={() => handleDelete(item._id)}
-                        disabled={deleteMutation.isPending}
+                        onClick={(e) => {
+                          e.target.innerText = "Deleting..";
+                          handleDelete(item._id);
+                        }}
                       >
-                        {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                        Delete
                       </button>
                     </td>
                   </tr>
