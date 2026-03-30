@@ -6,7 +6,7 @@ function Logout() {
     cookie.remove("token");
     toast.success("Logout Successful", {
       onClose: () => {
-        window.location.href = "/login";
+        window.location.replace = "/login";
       },
     });
   } catch (error) {
@@ -17,7 +17,7 @@ function Logout() {
 function LogoutWithoutNotification() {
   try {
     cookie.remove("token");
-    window.location.href = "/login";
+    window.location.replace = "/login";
   } catch (error) {
     console.log(error);
   }
