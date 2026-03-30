@@ -50,7 +50,8 @@ function AdminBookingHistory() {
             <h2>Booking History</h2>
           </div>
 
-          <table className="admin-table">
+          <div className="table-container">
+  <table className="admin-table">
             <thead>
               <tr>
                 <th>User</th>
@@ -94,6 +95,7 @@ function AdminBookingHistory() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

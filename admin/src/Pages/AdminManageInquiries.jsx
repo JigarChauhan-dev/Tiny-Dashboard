@@ -57,7 +57,8 @@ function AdminManageInquiries() {
           </div>
 
           {/* TABLE */}
-          <table className="admin-table">
+          <div className="table-container">
+<table className="admin-table">
             <thead>
               <tr>
                 <th>Name</th>
@@ -112,6 +113,7 @@ function AdminManageInquiries() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

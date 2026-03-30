@@ -66,7 +66,8 @@ function AdminManageUsers() {
                 style={{ marginBottom: "20px" }}
               />
 
-              <table className="admin-table">
+              <div className="table-container">
+<table className="admin-table">
                 <thead>
                   <tr>
                     <th>Username</th>
@@ -122,6 +123,7 @@ function AdminManageUsers() {
                   )}
                 </tbody>
               </table>
+              </div>
             </>
           )}
         </div>

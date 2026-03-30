@@ -72,7 +72,8 @@ function AdminManageFeedback() {
           </div>
 
           {/* TABLE */}
-          <table className="admin-table">
+          <div className="table-container">
+<table className="admin-table">
             <thead>
               <tr>
                 <th>User</th>
@@ -132,6 +133,7 @@ function AdminManageFeedback() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

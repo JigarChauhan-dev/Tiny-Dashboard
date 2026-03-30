@@ -162,7 +162,8 @@ function AdminManageState() {
             </form>
           )}
 
-          <table className="heritage-table">
+          <div className="table-container">
+<table className="admin-table">
             <thead>
               <tr>
                 <th>State</th>
@@ -216,6 +217,7 @@ function AdminManageState() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

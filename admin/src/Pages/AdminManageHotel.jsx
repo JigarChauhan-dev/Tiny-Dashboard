@@ -170,7 +170,8 @@ function AdminManageHotel() {
               </div>
 
               {/* TABLE (same as Heritage) */}
-              <table className="admin-table">
+              <div className="table-container">
+<table className="admin-table">
                 <thead>
                   <tr>
                     <th>Hotel Name</th>
@@ -229,6 +230,7 @@ function AdminManageHotel() {
                   )}
                 </tbody>
               </table>
+              </div>
             </>
           ) : (
             <>

@@ -203,65 +203,67 @@ function AdminManageLocation() {
             </form>
           )}
 
-          <table className="heritage-table">
-            <thead>
-              <tr>
-                <th>City</th>
-                <th>State</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {citiesLoading || statesLoading ? (
+          <div className="table-container">
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <td colSpan="4" align="center">
-                    Loading...
-                  </td>
+                  <th>City</th>
+                  <th>State</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
-              ) : citiesError || statesError ? (
-                <tr>
-                  <td colSpan="4" align="center" style={{ color: "red" }}>
-                    Failed to load data
-                  </td>
-                </tr>
-              ) : cities.length > 0 ? (
-                cities.map((item) => (
-                  <tr key={item._id}>
-                    <td>{item.city_name}</td>
-                    <td>
-                      {states.find((s) => s._id === item.state_id)
-                        ?.state_name || "N/A"}
-                    </td>
-                    <td>{item.status}</td>
-                    <td>
-                      <button
-                        className="edit-btn"
-                        onClick={() => openEditForm(item)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                          e.target.innerText = "Deleting..";
-                          handleDelete(item._id);
-                        }}
-                      >
-                        Delete
-                      </button>
+              </thead>
+              <tbody>
+                {citiesLoading || statesLoading ? (
+                  <tr>
+                    <td colSpan="4" align="center">
+                      Loading...
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" align="center">
-                    No cities found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                ) : citiesError || statesError ? (
+                  <tr>
+                    <td colSpan="4" align="center" style={{ color: "red" }}>
+                      Failed to load data
+                    </td>
+                  </tr>
+                ) : cities.length > 0 ? (
+                  cities.map((item) => (
+                    <tr key={item._id}>
+                      <td>{item.city_name}</td>
+                      <td>
+                        {states.find((s) => s._id === item.state_id)
+                          ?.state_name || "N/A"}
+                      </td>
+                      <td>{item.status}</td>
+                      <td>
+                        <button
+                          className="edit-btn"
+                          onClick={() => openEditForm(item)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={(e) => {
+                            e.target.innerText = "Deleting..";
+                            handleDelete(item._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" align="center">
+                      No cities found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

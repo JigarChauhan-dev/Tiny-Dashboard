@@ -161,7 +161,6 @@ function AdminManageHeritage() {
   }
 
   async function handleDelete(id) {
-    
     try {
       await api.delete(`/heritage/remove/${id}`);
       queryClient.invalidateQueries({ queryKey: ["heritage"] });
@@ -301,64 +300,65 @@ function AdminManageHeritage() {
               </div>
             </form>
           )}
-
-          <table className="heritage-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>City ID</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
+          <div className="table-container">
+            <table className="heritage-table">
+              <thead>
                 <tr>
-                  <td colSpan="4" align="center">
-                    Loading...
-                  </td>
+                  <th>Name</th>
+                  <th>City ID</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
-              ) : isError ? (
-                <tr>
-                  <td colSpan="4" align="center" style={{ color: "red" }}>
-                    ❌ Failed to load heritage data
-                  </td>
-                </tr>
-              ) : heritage.length > 0 ? (
-                heritage.map((item) => (
-                  <tr key={item._id}>
-                    <td>{item.name}</td>
-                    <td>{item.city_id}</td>
-                    <td>{item.status}</td>
-                    <td>
-                      <button
-                        className="edit-btn"
-                        onClick={() => handleEdit(item)}
-                        disabled={mutation.isPending}
-                      >
-                        {mutation.isPending ? "Edit.." : "Edit"}
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                          e.target.innerText = "Deleting..";
-                          handleDelete(item._id);
-                        }}
-                      >
-                        Delete
-                      </button>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="4" align="center">
+                      Loading...
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" align="center">
-                    No heritage found...
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                ) : isError ? (
+                  <tr>
+                    <td colSpan="4" align="center" style={{ color: "red" }}>
+                      ❌ Failed to load heritage data
+                    </td>
+                  </tr>
+                ) : heritage.length > 0 ? (
+                  heritage.map((item) => (
+                    <tr key={item._id}>
+                      <td>{item.name}</td>
+                      <td>{item.city_id}</td>
+                      <td>{item.status}</td>
+                      <td>
+                        <button
+                          className="edit-btn"
+                          onClick={() => handleEdit(item)}
+                          disabled={mutation.isPending}
+                        >
+                          {mutation.isPending ? "Edit.." : "Edit"}
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={(e) => {
+                            e.target.innerText = "Deleting..";
+                            handleDelete(item._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" align="center">
+                      No heritage found...
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

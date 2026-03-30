@@ -60,12 +60,12 @@ function AdminManageBooking() {
       <div className="main-content admin-main-content">
         <Header />
 
-        <div className="admin-body">
-          <>
-            <div className="page-header">
-              <h2>Booking Management</h2>
-            </div>
+        <div>
+          <div className="page-header">
+            <h2>Booking Management</h2>
+          </div>
 
+          <div className="table-container">
             <table className="admin-table">
               <thead>
                 <tr>
@@ -105,9 +105,9 @@ function AdminManageBooking() {
                         <button
                           className="btn-action btn-delete"
                           onClick={(e) => {
-                          e.target.innerText = "Deleting..";
-                          handleDelete(item._id);
-                        }}
+                            e.target.innerText = "Deleting..";
+                            handleDelete(item._id);
+                          }}
                         >
                           Delete
                         </button>
@@ -123,7 +123,7 @@ function AdminManageBooking() {
                 )}
               </tbody>
             </table>
-          </>
+          </div>
         </div>
       </div>
     </div>
