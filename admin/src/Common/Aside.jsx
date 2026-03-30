@@ -341,7 +341,6 @@ function Aside() {
           <div className="btn-box w-100 mt-4 mb-1">
             <Link
               onClick={() => Logout()}
-              target="_blank"
               className="btn mb-2 btn-primary btn-lg btn-block"
             >
               <i />
