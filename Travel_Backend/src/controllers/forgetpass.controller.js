@@ -40,7 +40,7 @@ const forgetpassword = async (req, res) => {
       from: '"Heritage App" <jigarchauhan9958@gmail.com>',
       to: email,
       subject: "Reset Your Password",
-      html: `
+      html: ` 
         <h2>Password Reset</h2>
         <p>Click the link below to reset your password</p>
         <a href="${resetLink}">Reset Password</a>

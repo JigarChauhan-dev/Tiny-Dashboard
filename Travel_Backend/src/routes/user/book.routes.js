@@ -7,4 +7,4 @@ router.get("/all",Authenticate,Authorize("user"),fetchBookings)
 router.post("/submit",Authenticate,Authorize("user"),addBooking);
 router.delete("/remove/:id",Authenticate,Authorize("admin"),removeBooking)
 
-module.exports = router;
+module.exports = router;    

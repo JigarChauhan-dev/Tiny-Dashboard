@@ -79,7 +79,7 @@ function BookHeritage() {
         handler: async (response) => {
           try {
             let response = await api.post(
-              "/user/book/submit",
+              "/user/book/submit",  
               booking,
               ticketprice,
             );
@@ -94,7 +94,7 @@ function BookHeritage() {
             toast.success("Your visit has been scheduled successfully.", {
               onClose: () => {
                 navigate("/bookinghistory")
-                // window.location.href = "/bookinghistory";
+                window.location.href = "/bookinghistory";
                 
               },
             });

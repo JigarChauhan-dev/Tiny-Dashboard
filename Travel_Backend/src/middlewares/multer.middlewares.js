@@ -19,7 +19,7 @@ const fileFilter = (req, file, cb) => {
   if (ext && mime) cb(null, true);
   else cb(new Error("Only image files allowed"));
 };
-
+  
 const uploadHeritage = multer({
   storage,
   fileFilter,

@@ -12,7 +12,7 @@ const resetPassword = async (req, res) => {
         console.log(password);
       return res.status(400).send({
         status: false,
-        message: "Token and new password required",
+        message: "  ",
       });
     }
 

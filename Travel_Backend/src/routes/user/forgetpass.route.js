@@ -8,4 +8,4 @@ const router = express.Router();
 router.post("/forgotpassword", forgetpassword);
 router.post("/reset-password", resetPassword);
 
-module.exports = router;
+module.exports = router;    

@@ -24,7 +24,7 @@ let Authenticate = async (req, res, next) => {
   } catch (error) {
     console.error("JWT Error:", error.message);
     return res.status(401).json({ status: false, message: "Invalid or expired token" });
-  }
+  } 
 };
 
 const Authorize = (role) => {

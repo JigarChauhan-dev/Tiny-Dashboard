@@ -25,7 +25,7 @@ function ForgotPassword() {
       "http://localhost:8000/api/user/password/forgotpassword",
       formData,
     );
-    return Response.data;
+    return Response.data; 
   };
 
   const mutation = useMutation({
@@ -74,7 +74,7 @@ function ForgotPassword() {
 
             <form onSubmit={handleSubmit}>
               <div>
-                <p className="text-head">Email</p>
+                <p className="text-head">Email</p>  
                 <input
                   type="email"
                   className="input"

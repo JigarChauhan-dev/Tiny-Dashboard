@@ -6,10 +6,10 @@ import CheckToken from "../utils/CheckToken";
 import Logout from "../utils/Logout";
 
 function Header() {
-  let [token, setToken] = useState("");
+  const [token, setToken] = useState("");
 
   useEffect(() => {
-    let token = CheckToken();
+    const token = CheckToken();
     setToken(token);
   }, []);
   // console.log(token);

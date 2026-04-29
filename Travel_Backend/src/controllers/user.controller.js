@@ -1,18 +1,24 @@
-const { ObjectId } = require("mongodb");
-const { connectDb } = require("../config/connection");
+import { ObjectId } from "mongodb";
+import { connectDB } from "../config/connection";
 
-let Profile = async (req, res) => {
- try {
-    let db = await connectDb();
-    let collection = db.collection("users");
-    let userId = req.user.id;
-    console.log(userId);
+const Profile = async (req, res) => {
+  try {
+    const db = await connectDB();
+    const collection = db.collection("users");
 
-    let user = await collection.findOne(
+    const userId = req.user?.id;
+
+    if (!userId || !ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid User ID",
+      });
+    }
+
+    const user = await collection.findOne(
       { _id: new ObjectId(userId) },
-      { projection: { password: 0 } }, 
+      { projection: { password: 0 } },
     );
-    console.log("main UserData",user);
 
     if (!user) {
       return res.status(404).json({
@@ -24,15 +30,15 @@ let Profile = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "Profile Found",
-      users: user, 
-      user: req.user,
+      user: user,
     });
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: false,
-      message: "Internal server Error. please try again later",
+      message: "Internal server error. Please try again later",
     });
   }
 };
-module.exports = { Profile };
+
+export default Profile;
